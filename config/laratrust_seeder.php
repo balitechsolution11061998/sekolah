@@ -12,63 +12,21 @@ return [
     'truncate_tables' => true,
 
     'roles_structure' => [
-        'superadministrator' => [
+        'administrator' => [
             'users' => 'c,r,u,d',
+            'role' => 'c,r,u,d',
+            'permissions' => 'c,r,u,d',
             'profile' => 'r,u',
             'home' => 's,u',
         ],
-        'administrator' => [
-            'users' => 'c,r,u,d',
+        'siswa' => [
             'profile' => 'r,u',
         ],
-        'user' => [
+        'guru' => [
             'profile' => 'r,u',
         ],
-        'admin_md_region' => [
-            'users' => 'c,r,u,d',
-            'profile' => 'r,u',
-            'md_region' => 'c,r,u,d',
-        ],
-        'acct' => [
-            'finance' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'bdm' => [
-            'business' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'data_analyst_md' => [
-            'data' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'it' => [
-            'technology' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'md_ho' => [
-            'head_office' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'md_manager' => [
-            'management' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'md_region' => [
-            'region' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'opr' => [
-            'operations' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'supplier' => [
-            'supplier_management' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
-        'wh' => [
-            'warehouse' => 'c,r,u,d',
-            'profile' => 'r,u',
-        ],
+
+
     ],
 
     'permissions_map' => [
