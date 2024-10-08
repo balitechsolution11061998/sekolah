@@ -25,7 +25,7 @@ class UsersImport implements ToModel, WithChunkReading, WithBatchInserts
     public function model(array $row)
     {
         // Skip the first row (header)
-        if ($row[0] == 'SUPPLIER') {
+        if ($row[0] == 'guru') {
             return null;
         }
 
