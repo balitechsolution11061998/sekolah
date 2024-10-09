@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Registration Form with Progress Bars</title>
+    <title>Registration User</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap">
     <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f9f9f9;
+        }
+
         .form-container {
             max-width: 600px;
             width: 90%;
@@ -107,11 +113,18 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
 
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            display: block;
+        }
+
         @media (max-width: 768px) {
             .form-control, .form-select, .input-group-text {
                 font-size: 14px;
             }
-        }
+ }
 
         .chart-container {
             margin-top: 30px;
@@ -121,6 +134,7 @@
 <body>
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
         <div class="form-container shadow-sm">
+            <img src="{{ asset('img/logo/logo.png') }}" alt="Logo" class="w-20 mx-auto">
             <h3 class="text-center mb-4">Register</h3>
 
             <form method="POST" action="{{ route('register') }}">
@@ -214,7 +228,7 @@
 
                 <!-- Role Selection Dropdown -->
                 <div class="mb-3">
-                    <label for="role" class="form-label-custom">Role</label>
+ <label for="role" class="form-label-custom">Role</label>
                     <select id="role" name="role" class="form-select custom-select-box" required>
                         @foreach ($roles as $role)
                             <option value="{{ $role->id }}">{{ $role->name }}</option>
@@ -236,7 +250,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
     <script>
-
 
         function checkPasswordStrength() {
             const password = document.getElementById('password').value;
