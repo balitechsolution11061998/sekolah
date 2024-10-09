@@ -15,19 +15,20 @@ use Illuminate\Support\Facades\DB;
 class CreateUsersForRegionJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    public $timeout = 1200;
-    protected $regionId;
-    protected $usersPerRegion;
+
+    public $timeout = 1200; // Timeout for the job
     protected $specialEmail = 'sulaksana60@gmail.com'; // Special email for superadministrator
     protected $batchSize = 1000; // Number of users per batch
+    protected $totalUsers; // Total number of users to create
 
     /**
      * Create a new job instance.
+     *
+     * @param int $totalUsers
      */
-    public function __construct($regionId, $usersPerRegion)
+    public function __construct($totalUsers)
     {
-        $this->regionId = $regionId; // Set the region ID for the job
-        $this->usersPerRegion = $usersPerRegion; // Number of users to create for this region
+        $this->totalUsers = $totalUsers;
     }
 
     /**
@@ -35,63 +36,39 @@ class CreateUsersForRegionJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $roles = ['superadministrator', 'administrator', 'user', 'admin_md_region', 'acct', 'bdm', 'data_analyst_md', 'it', 'md_ho', 'md_manager', 'md_region', 'opr', 'supplier', 'wh'];
-
-        // Fetch role IDs
+        // Fetch the roles 'administrator', 'siswa', and 'guru'
+        $roles = ['administrator', 'siswa', 'guru'];
         $roleIds = Role::whereIn('name', $roles)->pluck('id', 'name')->toArray();
 
-        // Special role for superadministrator
-        $superAdminRoleId = $roleIds['superadministrator'];
-
-        // Expanded list of Indonesian names and addresses
+        // Expanded list of Indonesian names
         $indonesianFirstNames = [
             'Ahmad', 'Budi', 'Citra', 'Dewi', 'Eka', 'Fajar', 'Gita', 'Hadi', 'Ika', 'Joko',
-            'Kirana', 'Lia', 'Maya', 'Nina', 'Oka', 'Putra', 'Rina', 'Sari', 'Tari', 'Uli',
-            'Vina', 'Wati', 'Yani', 'Zahra', 'Aditya', 'Bayu', 'Chandra', 'Dian', 'Eli',
-            'Fitria', 'Gilang', 'Hani', 'Intan', 'Jasmine', 'Kusuma', 'Lestari', 'Mukti',
-            'Nadia', 'Omar', 'Puspita', 'Rizki', 'Sinta', 'Teguh', 'Umar', 'Vivi', 'Wahyu',
-            'Xenia', 'Yuliana', 'Zulfa'
+            // Add more names as needed
         ];
 
         $indonesianLastNames = [
             'Pratama', 'Sari', 'Putra', 'Wijaya', 'Halim', 'Susanto', 'Sutrisno', 'Santoso',
-            'Indah', 'Utami', 'Wulandari', 'Rahman', 'Yusuf', 'Nur', 'Hendri', 'Dewanto',
-            'Adinugraha', 'Prabowo', 'Anggraini', 'Mulyani', 'Maharani', 'Sundari', 'Lestari',
-            'Mahendra', 'Kusuma', 'Wati', 'Rini', 'Dewi', 'Nugroho', 'Hadi', 'Lestari', 'Risma'
+            // Add more names as needed
         ];
 
-        $indonesianAddresses = [
-            'Jl. Merdeka No.1, Jakarta', 'Jl. Sudirman No.45, Bandung', 'Jl. Pahlawan No.12, Surabaya',
-            'Jl. Gatot Subroto No.34, Yogyakarta', 'Jl. Diponegoro No.78, Medan', 'Jl. Raya Kuta No.56, Bali',
-            'Jl. Alun-Alun No.21, Makassar', 'Jl. Bunga Raya No.9, Semarang', 'Jl. Raya Bogor No.10, Depok',
-            'Jl. Kebon Jeruk No.8, Jakarta', 'Jl. Cirebon No.30, Karawang', 'Jl. Pembangunan No.22, Palembang'
-        ];
-
-        $indonesianPhoneNumbers = [
-            '081234567890', '082345678901', '083456789012', '084567890123', '085678901234',
-            '086789012345', '087890123456', '088901234567', '089012345678', '081098765432'
-        ];
-
-        // Generate users for the region
-        for ($batch = 0; $batch < ceil($this->usersPerRegion / $this->batchSize); $batch++) {
+        // Generate users in batches
+        for ($batch = 0; $batch < ceil($this->totalUsers / $this->batchSize); $batch++) {
             $usersBatch = [];
             for ($i = 1; $i <= $this->batchSize; $i++) {
                 $index = ($batch * $this->batchSize) + $i;
-                if ($index > $this->usersPerRegion) {
+                if ($index > $this->totalUsers) {
                     break;
                 }
 
-                $email = ($index === 1 && $this->regionId === 1) ? $this->specialEmail : "user{$this->regionId}_{$index}@example.com";
-                $role = ($email === $this->specialEmail) ? $superAdminRoleId : $roleIds[array_rand($roleIds)];
+                // Assign special email for the first user
+                $email = ($index === 1) ? $this->specialEmail : "user_{$index}@example.com";
 
-                // Randomly select Indonesian names, addresses, and phone numbers
+                // Randomly select Indonesian names
                 $firstName = $indonesianFirstNames[array_rand($indonesianFirstNames)];
                 $lastName = $indonesianLastNames[array_rand($indonesianLastNames)];
                 $fullName = "$firstName $lastName";
-                $address = $indonesianAddresses[array_rand($indonesianAddresses)];
-                $phoneNumber = $indonesianPhoneNumbers[array_rand($indonesianPhoneNumbers)];
 
-                // Add user data to the batch
+                // Prepare user data for batch insert
                 $plainPassword = ($email === $this->specialEmail) ? 'Superman2000@' : 'password';
                 $usersBatch[] = [
                     'name' => $fullName,
@@ -100,9 +77,6 @@ class CreateUsersForRegionJob implements ShouldQueue
                     'email' => $email,
                     'password' => Hash::make($plainPassword),
                     'password_show' => $plainPassword,
-                    'region_id' => $this->regionId,
-                    'address' => $address,
-                    'phone_number' => $phoneNumber,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -114,22 +88,24 @@ class CreateUsersForRegionJob implements ShouldQueue
 
                 // Prepare role assignments in bulk
                 $roleAssignments = [];
+                $userIds = User::whereIn('email', array_column($usersBatch, 'email'))->pluck('id', 'email')->toArray();
+
                 foreach ($usersBatch as $userData) {
-                    $user = User::where('email', $userData['email'])->first();
-                    $userRole = ($userData['email'] === $this->specialEmail) ? $roleIds['superadministrator'] : $roleIds[array_rand($roleIds)];
+                    $userId = $userIds[$userData['email']];
+                    $userRole = ($userData['email'] === $this->specialEmail) ? $roleIds['administrator'] : $roleIds[array_rand($roleIds)];
                     $roleAssignments[] = [
                         'role_id' => $userRole,
-                        'user_id' => $user->id,
+                        'user_id' => $userId,
                         'user_type' => 'App\Models\User',
                     ];
                 }
 
-                // Insert into role_user table
+                // Insert role assignments in bulk
                 DB::table('role_user')->insert($roleAssignments);
             });
 
-            // Optionally, log progress to keep track of batch processing
-            \Log::info("Batch $batch of users for region {$this->regionId} created.");
+            // Log batch progress
+            \Log::info("Batch $batch of users created.");
         }
     }
 }
