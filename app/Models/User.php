@@ -27,8 +27,6 @@ class User extends Authenticatable
         'password',
         'password_show',
         'profile_picture',
-        'address',
-        'region_id',
     ];
 
     /**
@@ -55,8 +53,5 @@ class User extends Authenticatable
         return $this->hasMany(PasswordHistory::class);
     }
     // In User.php model
-    public function region()
-    {
-        return $this->belongsTo(Region::class);
-    }
+
 }

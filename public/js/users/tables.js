@@ -66,11 +66,7 @@ dataTableHelper("#users_table", "/management/users/data", [
         name: "roles",
         render: function (data) {
             const roleIcons = {
-                "administrator": "fa-user-shield",
-                "superadministrator": "fa-user-crown",
-                "manager": "fa-users-cog",
-                "editor": "fa-edit",
-                "viewer": "fa-eye",
+                "Administrator": "fa-user-shield",
             };
 
             return data
@@ -83,13 +79,7 @@ dataTableHelper("#users_table", "/management/users/data", [
                 .join(" ");
         },
     },
-    {
-        data: "region",
-        name: "region",
-        render: function (data) {
-            return data ? data : 'N/A';
-        },
-    },
+
     {
         data: "created_at",
         name: "created_at",

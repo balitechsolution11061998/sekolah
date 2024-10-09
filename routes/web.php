@@ -7,6 +7,8 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +29,7 @@ Route::controller(RegisterController::class)->group(function () {
     Route::post('register', 'register');
 });
 Route::get('/', [LoginController::class, 'showLoginForm'])->name('login.form');
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('login.form');
 Route::post('login/prosesForm', [LoginController::class, 'login'])->name('login.prosesForm');
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 // Home route with 'auth' middleware and role check (Laratrust)
@@ -68,7 +71,39 @@ Route::prefix('management/users')
             ->name('profile'); // 'management.users.profile'
     });
 
+Route::prefix('students')
+    ->middleware('auth')
+    ->as('students.') // Set a name prefix for all routes in this group
+    ->group(function () {
+        // User Management Dashboard
+        Route::get('/', [StudentController::class, 'index'])
+            ->name('index'); // 'management.users.index'
+
+        // Fetching user data for DataTables
+        Route::get('/data', [StudentController::class, 'data'])
+            ->name('data'); // 'management.users.data'
+
+        // Store user data (create/update)
+        Route::post('/store', [StudentController::class, 'store'])
+            ->name('store'); // 'management.users.store'
+
+        Route::post('/update', [StudentController::class, 'update'])
+            ->name('update'); // 'management.users.store'
+
+        // Edit user data by ID
+        Route::get('/{id}/edit', [StudentController::class, 'edit'])
+            ->name('edit'); // 'management.users.edit'
+
+        // Delete user data by ID
+        Route::delete('/{id}', [StudentController::class, 'destroy'])
+            ->name('destroy'); // 'management.users.destroy'
+
+        // Change user password
+
+    });
+
 // Role management routes
+
 Route::prefix('roles')
     ->middleware('auth')
     ->as('roles.')
@@ -103,16 +138,10 @@ Route::prefix('suppliers')
 
     });
 
+Route::post('/upload', [UploadController::class, 'upload']);
 
 
-Route::prefix('regions')
-    ->middleware('auth')
-    ->as('regions.') // Set a name prefix for all role routes
-    ->group(function () {
-        // Fetch roles data
-        Route::get('/data', [RegionController::class, 'data'])
-            ->name('data'); // 'roles.getRoles'
-    });
+
 
 // Profile Picture management routes
 Route::post('/upload-profile-picture', [ProfileController::class, 'uploadProfilePicture']);

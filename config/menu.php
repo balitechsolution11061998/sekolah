@@ -23,6 +23,18 @@ return [
             'label' => 'Pages',
             'type'  => 'heading' // This represents a section heading (non-clickable)
         ],
+        [
+            'label'          => 'Siswa',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'fas',
+            'iconName'       => 'fa-user',
+            'route'          => 'students.index',
+            'active'         => [],
+            'iconPath'       => 4,
+
+        ],
 
         // Management User menu item with sub-items (children)
         [

@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0/src/toastify.min.css">
+
     <style>
         body {
             font-family: 'Open Sans', sans-serif;
@@ -215,9 +217,10 @@
                     <span class="input-group-text">
                         <i class="fas fa-user-tag"></i>
                     </span>
-                    <select id="role" class="form-select @error('role') is-invalid @enderror" name="role" required>
+                    <select id="role" class="form-select @error('role') is-invalid @enderror" name="role"
+                        required>
                         <option value="" disabled selected>Select a role</option>
-                        @foreach($roles as $role)
+                        @foreach ($roles as $role)
                             <option value="{{ $role->id }}">{{ $role->name }}</option>
                         @endforeach
                     </select>
@@ -230,8 +233,8 @@
             </div>
 
             <div class="progress" style="height: 20px; display: none;">
-                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                    style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
+                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated"
+                    role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
             <button type="submit" class="btn btn-primary w-100">
                 <span class="spinner-border spinner-border-sm"></span>
@@ -245,6 +248,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js@1.12.0/src/toastify.min.js"></script>
 
     <script>
         // Dark mode toggle functionality
@@ -294,37 +298,29 @@
                 $progressContainer.show();
                 $progressBar.css('width', '0%');
 
-                // Create a new XMLHttpRequest object
-                const xhr = new XMLHttpRequest();
-
-                xhr.open('POST', $(this).attr('action'), true);
-
-                // Track upload progress
-                xhr.upload.onprogress = function(event) {
-                    if (event.lengthComputable) {
-                        const percentComplete = (event.loaded / event.total) * 100;
-                        $progressBar.css('width', percentComplete + '%').attr('aria-valuenow',
-                            percentComplete);
-                    }
-                };
-
-                // Handle response
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                // Send the request with form data
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: new FormData(this),
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
                         $spinner.hide();
                         $progressContainer.hide();
                         $submitBtn.removeClass('btn-loading').prop('disabled', false);
-
-                        if (xhr.status === 200) {
-                            const response = JSON.parse(xhr.responseText);
+                        console.log(response,'response');
+                        if (response.status === 200) {
                             if (response.data_exists) {
                                 // User already exists
                                 Toastify({
-                                    text: 'User already exists!',
+                                    text: 'User     already exists!',
                                     duration: 3000,
                                     gravity: 'top',
                                     position: 'right',
-                                    backgroundColor: '#dc3545' // Red for error
+                                    backgroundColor: '#dc3545', // Red for error
+                                    icon: 'fas fa-times-circle',
+                                    className: 'toast-error'
                                 }).showToast();
                             } else {
                                 // Registration successful
@@ -333,30 +329,78 @@
                                     duration: 3000,
                                     gravity: 'top',
                                     position: 'right',
-                                    backgroundColor: '#28a745' // Green for success
+                                    backgroundColor: '#28a745', // Green for success
+                                    icon: 'fas fa-check-circle',
+                                    className: 'toast-success'
                                 }).showToast();
+
+                                // Redirect to login page after 3 seconds
+                                setTimeout(function() {
+                                    window.location.href = '/login';
+                                }, 3000);
                             }
                         } else {
                             // Handle different status codes or general error
-                            const errorMessage = xhr.responseJSON && xhr.responseJSON.message ?
-                                xhr.responseJSON.message :
+                            const errorMessage = response.message ? response.message :
                                 'Something went wrong!';
 
                             // Show error message using Toastify
+                            if (response.error === 'Validation error') {
+                                Toastify({
+                                    text: response.message,
+                                    duration: 3000,
+                                    gravity: 'top',
+                                    position: 'right',
+                                    backgroundColor: '#dc3545', // Red for error
+                                    icon: 'fas fa-times-circle',
+                                    className: 'toast-error'
+                                }).showToast();
+                            } else {
+                                Toastify({
+                                    text: errorMessage,
+                                    duration: 3000,
+                                    gravity: 'top',
+                                    position: 'right',
+                                    backgroundColor: '#dc3545', // Red for error
+                                    icon: 'fas fa-times-circle',
+                                    className: 'toast-error'
+                                }).showToast();
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $spinner.hide();
+                        $progressContainer.hide();
+                        $submitBtn.removeClass('btn-loading').prop('disabled', false);
+
+                        // Handle different status codes or general error
+                        const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr
+                            .responseJSON.message : 'Something went wrong!';
+
+                        // Show error message using Toastify
+                        if (xhr.responseJSON && xhr.responseJSON.error === 'Validation error') {
+                            Toastify({
+                                text: xhr.responseJSON.message,
+                                duration: 3000,
+                                gravity: 'top',
+                                position: 'right',
+                                backgroundColor: '#dc3545', // Red for error
+                                icon: 'fas fa-times-circle',
+                                className: 'toast-error'
+                            }).showToast();
+                        } else {
                             Toastify({
                                 text: errorMessage,
                                 duration: 3000,
                                 gravity: 'top',
                                 position: 'right',
-                                backgroundColor: '#dc3545' // Red for error
+                                backgroundColor: '#dc3545', // Red for error
+                                icon: 'fas fa-times-circle',
+                                className: 'toast-error'
                             }).showToast();
                         }
                     }
-                };
-
-                // Send the request with form data
-                const formData = new FormData(this);
-                xhr.send(formData);
+                });
             });
         });
     </script>

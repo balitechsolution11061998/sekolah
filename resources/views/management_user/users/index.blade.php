@@ -251,7 +251,6 @@
                             <th class="min-w-150px">Email</th>
                             <th class="min-w-150px">Password</th>
                             <th class="min-w-150px">Roles</th>
-                            <th class="min-w-150px">Regions</th>
                             <th class="min-w-100px">Created At</th>
                             <th class="min-w-100px text-end">Actions</th>
                         </tr>
@@ -410,18 +409,6 @@
 
 
 
-                        <!-- Address field -->
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address" name="address" placeholder="Address" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="region" class="form-label">Region</label>
-                            <select class="form-select" id="region" name="region" required>
-                                <option value="">Select Region</option>
-                                <!-- Options will be dynamically loaded here -->
-                            </select>
-                        </div>
 
                         <div class="mb-3">
                             <label for="roles" class="form-label">Roles</label>
@@ -539,7 +526,6 @@
                 var loading = false;
                 var itemsPerPage = 10;
                 fetchRoles();
-                fetchRegions();
 
                 $('#roles').select2({
                     placeholder: "Select roles", // Optional placeholder
@@ -712,8 +698,6 @@
                     formData.append('email', $('#email').val());
                     formData.append('password', $('#password').val());
                     formData.append('password_confirmation', $('#confirmPassword').val());
-                    formData.append('address', $('#address').val());
-                    formData.append('region_id', $('#region').val());
 
                     // Get selected roles as an array
                     let selectedRoles = $('#roles')
@@ -1018,23 +1002,7 @@
                 });
             });
 
-            function fetchRegions() {
-                // Fetch regions from your API or server
-                fetch('/regions/data') // Update the URL to your API endpoint
-                    .then(response => response.json())
-                    .then(data => {
-                        const regionSelect = document.getElementById('region');
-                        regionSelect.innerHTML = '<option value="">Select Region</option>'; // Reset options
 
-                        data.forEach(region => {
-                            const option = document.createElement('option');
-                            option.value = region.id;
-                            option.textContent = region.name;
-                            regionSelect.appendChild(option);
-                        });
-                    })
-                    .catch(error => console.error('Error fetching regions:', error));
-            }
 
             function editUser(id) {
                 $.ajax({
@@ -1051,9 +1019,7 @@
                             'change'
                         ); // Set selected values and trigger change event to update the select2 or similar plugins if used
                         $('#address').val(response.address);
-                        $('#region').val(response.region).trigger(
-                            'change'
-                        );
+
 
                         // Clear previous error messages
                         $('#passwordError').hide();

@@ -5,6 +5,7 @@
     <base href=""/>
     <title>{{ config('settings.KT_APP_NAME') }} - @yield('title')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <meta charset="utf-8"/>
     <meta name="description" content=""/>
     <meta name="keywords" content=""/>

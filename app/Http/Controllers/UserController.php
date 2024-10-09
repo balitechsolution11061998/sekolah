@@ -68,19 +68,14 @@ class UserController extends Controller
     public function getUsersData(Request $request)
     {
         if ($request->ajax()) {
-            // Query to get user data with roles and region
-            $data = User::with(['roles', 'region']) // Eager load roles and region
-                        ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'region_id', 'created_at');
-
+            $data = User::with(['roles'])
+                        ->select('id', 'profile_picture', 'username', 'name', 'email', 'password_show', 'created_at');
             return Datatables::of($data)
                 ->addColumn('roles', function ($row) {
                     // Fetch and format roles
                     return $row->roles->pluck('name')->implode(', ');
                 })
-                ->addColumn('region', function ($row) {
-                    // Fetch and format region name
-                    return $row->region ? $row->region->name : 'N/A';
-                })
+
                 ->addColumn('actions', function ($row) {
                     // Fetch roles for the current user
                     $userRoles = $row->roles->pluck('name')->toArray();
@@ -183,8 +178,6 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . ($request->id ?? 'NULL'), // Unique for all except current user (update)
             'password' => $request->id ? 'nullable|min:8|confirmed' : 'required|min:8|confirmed', // Password is required for new user, optional for update
-            'address' => 'required|string|max:255',
-            'region_id' => 'required|integer',
             'roles' => 'required|array',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
@@ -225,8 +218,6 @@ class UserController extends Controller
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => bcrypt($validated['password']),
-                'address' => $validated['address'],
-                'region_id' => $validated['region_id'],
                 'profile_picture' => $profilePicturePath,
             ]);
         } else {
@@ -239,8 +230,6 @@ class UserController extends Controller
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => $validated['password'] ? bcrypt($validated['password']) : $user->password,
-                'address' => $validated['address'],
-                'region_id' => $validated['region_id'],
                 'profile_picture' => $profilePicturePath,
             ]);
         }
@@ -287,8 +276,6 @@ class UserController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'roles' => $user->roles->pluck('name'), // Assuming roles are fetched by name
-                'address' => $user->address,
-                'region' => $user->region_id,
             ]);
         }
 
