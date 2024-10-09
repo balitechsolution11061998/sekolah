@@ -15,10 +15,20 @@
     <!-- Animate.css for animations -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
+    <!-- Toastify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
     <style>
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f6f9;
+        }
+
+        /* Progress bar */
+        #progressBar {
+            display: none;
+            height: 5px;
+            background-color: #3490dc;
         }
     </style>
 </head>
@@ -26,6 +36,9 @@
 
     <div class="w-full max-w-sm mx-auto animate__animated animate__fadeInUp">
         <div class="bg-white shadow-lg rounded-lg p-6">
+            <!-- Progress Bar -->
+            <div id="progressBar"></div>
+
             <!-- Logo (optional) -->
             <div class="text-center mb-6">
                 <img src="{{ asset('img/logo/logo.png') }}" alt="Logo" class="w-20 mx-auto">
@@ -34,7 +47,7 @@
             <h3 class="text-2xl font-semibold text-center mb-4">Welcome Back</h3>
             <p class="text-center text-gray-500 mb-6">Please login to your account</p>
 
-            <form method="POST" action="{{ route('login.prosesForm') }}">
+            <form id="loginForm" method="POST" action="{{ route('login.prosesForm') }}">
                 @csrf
 
                 <!-- Email Field -->
@@ -79,9 +92,7 @@
                 <!-- Remember Me -->
                 <div class="flex items-center mb-4">
                     <input type="checkbox" name="remember" id="remember" class="h-4 w-4 text-blue-600 border-gray-300 rounded" {{ old('remember') ? 'checked' : '' }}>
-                    <label for="remember" class="ml-2 block text-sm text-gray-900">
-                        Remember Me
-                    </label>
+                    <label for="remember" class="ml-2 block text-sm text-gray-900">Remember Me</label>
                 </div>
 
                 <!-- Submit Button -->
@@ -111,15 +122,70 @@
         </div>
     </div>
 
+    <!-- Toastify and JS Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
         const togglePassword = document.querySelector('#togglePassword');
         const password = document.querySelector('#password');
+        const progressBar = document.getElementById('progressBar');
+        const loginForm = document.getElementById('loginForm');
 
         togglePassword.addEventListener('click', function () {
             const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
             password.setAttribute('type', type);
             this.querySelector('i').classList.toggle('fa-eye');
             this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+
+        // Handle form submission
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Show progress bar
+            progressBar.style.display = 'block';
+            progressBar.style.width = '0%';
+
+            // Simulate progress bar loading
+            let width = 0;
+            const interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+
+                    // Simulate success/failure response
+                    const isSuccess = Math.random() > 0.5; // Random success or failure
+
+                    if (isSuccess) {
+                        // Show success notification
+                        Toastify({
+                            text: "Login successful!",
+                            duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "center",
+                            backgroundColor: "green",
+                            stopOnFocus: true,
+                            avatar: '<i class="fas fa-check-circle text-white"></i>',
+                        }).showToast();
+                    } else {
+                        // Show failure notification
+                        Toastify({
+                            text: "Login failed! Please check your credentials.",
+                            duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "center",
+                            backgroundColor: "red",
+                            stopOnFocus: true,
+                            avatar: '<i class="fas fa-times-circle text-white"></i>',
+                        }).showToast();
+                    }
+
+                    progressBar.style.display = 'none';
+                } else {
+                    width += 10;
+                    progressBar.style.width = width + '%';
+                }
+            }, 200); // Simulate progress update every 200ms
         });
     </script>
 </body>
