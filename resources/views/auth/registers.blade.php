@@ -127,122 +127,126 @@
 </head>
 
 <body>
-    <div class="form-container shadow-sm">
-        <img src="{{ asset('img/logo/logo.png') }}" alt="Logo" class="logo mx-auto">
-        <h3 class="text-center">Register</h3>
+    <div class="container mt-5" style="width:500px;">
+        <div class="card shadow-lg rounded">
+            <div class="card-body p-4">
+                <img src="{{ asset('img/logo/logo.png') }}" alt="Logo" class="logo mx-auto d-block mb-4" style="width: 80px;">
+                <h3 class="text-center mb-4">Register</h3>
 
-        <form method="POST" action="{{ route('register') }}" id="registrationForm">
-            @csrf
-            <div class="mb-3">
-                <label for="username" class="form-label-custom">Username</label>
-                <div class="input-group has-validation">
-                    <span class="input-group-text">
-                        <i class="fas fa-user"></i>
-                    </span>
-                    <input id="username" type="text" class="form-control @error('username') is-invalid @enderror"
-                        name="username" value="{{ old('username') }}" required autofocus>
-                    @error('username')
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                <form method="POST" action="{{ route('register') }}" id="registrationForm">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <input id="username" type="text" class="form-control @error('username') is-invalid @enderror"
+                                name="username" value="{{ old('username') }}" required autofocus>
+                            @error('username')
+                                <div class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
                         </div>
-                    @enderror
-                </div>
-            </div>
+                    </div>
 
-            <div class="mb-3">
-                <label for="name" class="form-label-custom">Name</label>
-                <div class="input-group has-validation">
-                    <span class="input-group-text">
-                        <i class="fas fa-user"></i>
-                    </span>
-                    <input id="name" type="text" class="form-control @error('name') is-invalid @enderror"
-                        name="name" value="{{ old('name') }}" required>
-                    @error('name')
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <input id="name" type="text" class="form-control @error('name') is-invalid @enderror"
+                                name="name" value="{{ old('name') }}" required>
+                            @error('name')
+                                <div class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
                         </div>
-                    @enderror
-                </div>
-            </div>
+                    </div>
 
-            <div class="mb-3">
-                <label for="email" class="form-label-custom">Email</label>
-                <div class="input-group has-validation">
-                    <span class="input-group-text">
-                        <i class="fas fa-envelope"></i>
-                    </span>
-                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
-                        name="email" value="{{ old('email') }}" required>
-                    @error('email')
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
+                                name="email" value="{{ old('email') }}" required>
+                            @error('email')
+                                <div class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
                         </div>
-                    @enderror
-                </div>
-            </div>
+                    </div>
 
-            <div class="mb-3">
-                <label for="password" class="form-label-custom">Password</label>
-                <div class="input-group has-validation">
-                    <span class="input-group-text">
-                        <i class="fas fa-lock"></i>
-                    </span>
-                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
-                        name="password" required onkeyup="checkPasswordStrength()">
-                    @error('password')
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
+                                name="password" required onkeyup="checkPasswordStrength()">
+                            @error('password')
+                                <div class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
                         </div>
-                    @enderror
-                </div>
-                <div class="progress mt-2">
-                    <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;"
-                        aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="password_confirmation" class="form-label-custom">Confirm Password</label>
-                <div class="input-group has-validation">
-                    <span class="input-group-text">
-                        <i class="fas fa-lock"></i>
-                    </span>
-                    <input id="password_confirmation" type="password" class="form-control" name="password_confirmation"
-                        required>
-                </div>
-            </div>
-            <div class="mb-3">
-                <label for="role" class="form-label-custom">Role</label>
-                <div class="input-group has-validation">
-                    <span class="input-group-text">
-                        <i class="fas fa-user-tag"></i>
-                    </span>
-                    <select id="role" class="form-select @error('role') is-invalid @enderror" name="role"
-                        required>
-                        <option value="" disabled selected>Select a role</option>
-                        @foreach ($roles as $role)
-                            <option value="{{ $role->id }}">{{ $role->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('role')
-                        <div class="invalid-feedback">
-                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        <div class="progress mt-2">
+                            <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%;"
+                                aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                    @enderror
-                </div>
-            </div>
+                    </div>
 
-            <div class="progress" style="height: 20px; display: none;">
-                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated"
-                    role="progressbar" style="width: 0%;" aria-valuemin="0" aria-valuemax="100"></div>
+                    <div class="mb-3">
+                        <label for="password_confirmation" class="form-label">Confirm Password</label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input id="password_confirmation" type="password" class="form-control" name="password_confirmation"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Role</label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text">
+                                <i class="fas fa-user-tag"></i>
+                            </span>
+                            <select id="role" class="form-select @error('role') is-invalid @enderror" name="role"
+                                required>
+                                <option value="" disabled selected>Select a role</option>
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('role')
+                                <div class="invalid-feedback">
+                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                                </div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            <span>Register</span>
+                        </button>
+                    </div>
+                </form>
+                <button class="btn btn-secondary mt-3 w-100 theme-toggle" id="toggleTheme">Toggle Light/Dark Mode</button>
             </div>
-            <button type="submit" class="btn btn-primary w-100">
-                <span class="spinner-border spinner-border-sm"></span>
-                <span>Register</span>
-            </button>
-        </form>
-        <button class="btn btn-secondary mt-3 w-100 theme-toggle" id="toggleTheme">Toggle Light/Dark Mode</button>
+        </div>
     </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

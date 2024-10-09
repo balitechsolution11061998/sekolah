@@ -43,6 +43,7 @@
             font-size: 1.25rem;
             margin-right: 8px;
         }
+
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center bg-gray-100">
@@ -93,6 +94,8 @@
                         <i class="fas fa-sign-in-alt"></i> Login
                     </button>
                 </div>
+                <p class="text-center text-gray-500 mt-4">Don't have an account? <a href="{{ route('register') }}" class="text-blue-600 hover:underline">Register here</a></p>
+
             </form>
         </div>
     </div>
