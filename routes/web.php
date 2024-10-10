@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -101,6 +102,37 @@ Route::prefix('students')
         // Change user password
 
     });
+
+    Route::prefix('teachers')
+    ->middleware('auth')
+    ->as('teachers.') // Set a name prefix for all routes in this group
+    ->group(function () {
+        // Teacher Management Dashboard
+        Route::get('/', [TeacherController::class, 'index'])
+            ->name('index'); // 'teachers.index'
+
+        // Fetching teacher data for DataTables
+        Route::get('/data', [TeacherController::class, 'data'])
+            ->name('data'); // 'teachers.data'
+
+        // Store teacher data (create/update)
+        Route::post('/store', [TeacherController::class, 'store'])
+            ->name('store'); // 'teachers.store'
+
+        Route::post('/update', [TeacherController::class, 'update'])
+            ->name('update'); // 'teachers.update'
+
+        // Edit teacher data by ID
+        Route::get('/{id}/edit', [TeacherController::class, 'edit'])
+            ->name('edit'); // 'teachers.edit'
+
+        // Delete teacher data by ID
+        Route::delete('/{id}', [TeacherController::class, 'destroy'])
+            ->name('destroy'); // 'teachers.destroy'
+
+        // Change teacher password or any additional routes you need
+    });
+
 
 // Role management routes
 

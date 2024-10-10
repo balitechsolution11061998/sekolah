@@ -28,13 +28,24 @@ return [
             'type'           => 'item',
             'permission'     => [],
             'permissionType' => 'gate',
-            'icon'           => 'fas',
-            'iconName'       => 'fa-user',
+            'icon'           => 'fas', // FontAwesome solid icon
+            'iconName'       => 'fa-user', // Icon for students (fa-user)
             'route'          => 'students.index',
             'active'         => [],
             'iconPath'       => 4,
-
         ],
+        [
+            'label'          => 'Guru',
+            'type'           => 'item',
+            'permission'     => [],
+            'permissionType' => 'gate',
+            'icon'           => 'fas', // FontAwesome solid icon
+            'iconName'       => 'fa-chalkboard-teacher', // Icon for teachers (fa-chalkboard-teacher)
+            'route'          => 'teachers.index',
+            'active'         => [],
+            'iconPath'       => 4,
+        ],
+
 
         // Management User menu item with sub-items (children)
         [
