@@ -50,25 +50,33 @@
             color: #fff;
             /* White text */
         }
+
         .card-header {
             background-color: #007bff;
             color: white;
         }
+
         .modal-header {
             background-color: #007bff;
             color: white;
         }
+
         .table-striped tbody tr:nth-of-type(odd) {
             background-color: rgba(0, 123, 255, 0.05);
         }
-        .btn-primary, .btn-primary:hover {
+
+        .btn-primary,
+        .btn-primary:hover {
             background-color: #007bff;
             border-color: #007bff;
         }
-        .btn-secondary, .btn-secondary:hover {
+
+        .btn-secondary,
+        .btn-secondary:hover {
             background-color: #6c757d;
             border-color: #6c757d;
         }
+
         #my-dropzone {
             border: 2px dashed #007bff;
             border-radius: 5px;
@@ -77,6 +85,7 @@
             text-align: center;
             color: #007bff;
         }
+
         .progress-bar {
             background-color: #007bff;
         }
@@ -87,147 +96,163 @@
         integrity="sha512-VSD3lcSci0foeRFRHWdYX4FaLvec89irh5+QAGc00j5AOdow2r5MFPhoPEYBUQdyarXwbzyJEO7Iko7+PnPuBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-        <div class="container my-5">
-            <div class="card my-4 shadow-sm">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0">Teachers</h4>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="showCreateTeacherModal()">
-                        <i class="fas fa-plus"></i> Add Teacher
-                    </button>
-                </div>
-
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover table-bordered align-middle" id="teachers_table">
-                            <thead class="bg-light">
-                                <tr class="text-muted fw-bold text-uppercase">
-                                    <th class="text-center">#</th>
-                                    <th>Name</th>
-                                    <th>NIK</th>
-                                    <th>NUPTK</th>
-                                    <th>Phone Number</th>
-                                    <th>Status</th>
-                                    <th>Position</th>
-                                    <th class="text-center">Profile Photo</th>
-                                    <th class="text-center">Email</th>
-                                    <th class="text-center">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Populated by DataTables -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+    <div class="container my-5">
+        <div class="card my-4 shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Teachers</h4>
+                <button type="button" class="btn btn-primary btn-sm" onclick="showCreateTeacherModal()">
+                    <i class="fas fa-plus"></i> Add Teacher
+                </button>
             </div>
 
-            <!-- Teacher Modal for Create/Edit -->
-            <div class="modal fade" id="teacherModal" tabindex="-1" aria-labelledby="teacherModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="teacherModalLabel">Add Teacher</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <form id="teacherForm" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="modal-body">
-                                <input type="hidden" id="id" name="id">
-
-                                <!-- Profile Photo Upload -->
-                                <div class="mb-3">
-                                    <label for="profile_photo" class="form-label">Profile Photo</label>
-                                    <div id="my-dropzone" class="dropzone">Drag and drop a file here or click</div>
-                                    <div id="preview" class="mt-2"></div>
-                                    <input type="hidden" id="profile_photo_url" name="profile_photo_url">
-
-                                    <div id="progress-container" class="progress mt-2" style="display: none;">
-                                        <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;"
-                                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-
-                                <!-- Additional Fields for Teacher Details -->
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="nama_lengkap" class="form-label">Full Name</label>
-                                        <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap"
-                                            required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="nik" class="form-label">NIK</label>
-                                        <input type="text" class="form-control" id="nik" name="nik" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="nuptk" class="form-label">NUPTK</label>
-                                        <input type="text" class="form-control" id="nuptk" name="nuptk" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="status_kepegawaian" class="form-label">Employment Status</label>
-                                        <input type="text" class="form-control" id="status_kepegawaian"
-                                            name="status_kepegawaian" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="tanggal_lahir" class="form-label">Date of Birth</label>
-                                        <input type="date" class="form-control" id="tanggal_lahir" name="tanggal_lahir"
-                                            required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="nomor_handphone" class="form-label">Phone Number</label>
-                                        <input type="text" class="form-control" id="nomor_handphone"
-                                            name="nomor_handphone" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="jenis_kelamin" class="form-label">Gender</label>
-                                        <select class="form-select" id="jenis_kelamin" name="jenis_kelamin" required>
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="tugas" class="form-label">Position</label>
-                                        <input type="text" class="form-control" id="tugas" name="tugas" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="penempatan" class="form-label">Placement</label>
-                                        <input type="text" class="form-control" id="penempatan" name="penempatan"
-                                            required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email" required>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="email_madrasah" class="form-label">Madrasah Email</label>
-                                        <input type="email" class="form-control" id="email_madrasah"
-                                            name="email_madrasah">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="password_awal" class="form-label">Initial Password</label>
-                                        <input type="password" class="form-control" id="password_awal" name="password_awal"
-                                            required>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save changes</button>
-                            </div>
-                        </form>
-                    </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-bordered align-middle" id="teachers_table">
+                        <thead class="bg-light">
+                            <tr class="text-muted fw-bold text-uppercase">
+                                <th class="text-center">#</th>
+                                <th>Name</th>
+                                <th>NIK</th>
+                                <th>NUPTK</th>
+                                <th>Phone Number</th>
+                                <th>Status</th>
+                                <th>Position</th>
+                                <th class="text-center">Profile Photo</th>
+                                <th class="text-center">Email</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Populated by DataTables -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
+
+        <!-- Teacher Modal for Create/Edit -->
+        <div class="modal fade" id="teacherModal" tabindex="-1" aria-labelledby="teacherModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="teacherModalLabel">Add Teacher</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="teacherForm" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-body">
+                            <input type="hidden" id="id" name="id">
+
+                            <!-- Profile Photo Upload -->
+                            <div class="mb-3">
+                                <label for="profile_photo" class="form-label">Profile Photo</label>
+                                <div id="my-dropzone" class="dropzone">Drag and drop a file here or click</div>
+                                <div id="preview" class="mt-2"></div>
+                                <input type="hidden" id="profile_photo_url" name="profile_photo_url">
+
+                                <div id="progress-container" class="progress mt-2" style="display: none;">
+                                    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;"
+                                        aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Fields for Teacher Details -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nama_lengkap" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap"
+                                        required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="nik" class="form-label">NIK</label>
+                                    <input type="text" class="form-control" id="nik" name="nik" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nuptk" class="form-label">NUPTK</label>
+                                    <input type="text" class="form-control" id="nuptk" name="nuptk" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="status_kepegawaian" class="form-label">Employment Status</label>
+
+                                    <select class="form-select" id="status_kepegawaian" name="status_kepegawaian"
+                                        required>
+                                        <option value="">Pilih status kepegawaian...</option>
+                                        <option value="PNS">PNS</option>
+                                        <option value="Non PNS">Non PNS</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="tanggal_lahir" class="form-label">Date of Birth</label>
+                                    <input type="date" class="form-control" id="tanggal_lahir"
+                                        name="tanggal_lahir" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="nomor_handphone" class="form-label">Phone Number</label>
+                                    <input type="text" class="form-control" id="nomor_handphone"
+                                        name="nomor_handphone" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="jenis_kelamin" class="form-label">Gender</label>
+                                    <select class="form-select" id="jenis_kelamin" name="jenis_kelamin" required>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="tugas" class="form-label">Position</label>
+
+                                        <select class="form-select" id="tugas" name="tugas" required>
+                                            <option value="">Pilih tugas...</option>
+                                            <option value="Guru Mapel">Guru Mapel</option>
+                                            <option value="Kepala Madrasah / Plt">Kepala Madrasah / Plt</option>
+                                            <option value="Wakil Kepala Madrasah">Wakil Kepala Madrasah</option>
+                                        </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="penempatan" class="form-label">Placement</label>
+
+                                        <select class="form-select" id="penempatan" name="penempatan" required>
+                                            <option value="">Pilih penempatan...</option>
+                                            <option value="Satminkal">Satminkal</option>
+                                            <option value="Non Satminkal">Non Satminkal</option>
+                                        </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="email_madrasah" class="form-label">Madrasah Email</label>
+                                    <input type="email" class="form-control" id="email_madrasah"
+                                        name="email_madrasah">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="password_awal" class="form-label">Initial Password</label>
+                                    <input type="password" class="form-control" id="password_awal"
+                                        name="password_awal" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     @push('scripts')
         <!-- DataTables & Bootstrap Integration -->
         <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
