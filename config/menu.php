@@ -45,7 +45,27 @@ return [
             'active'         => [],
             'iconPath'       => 4,
         ],
+        [
+            'label'          => 'Master Data',          // Updated main menu label
+            'type'           => 'item',                 // Type item (clickable menu item)
+            'permission'     => [],                     // Permissions (empty implies no restrictions)
+            'permissionType' => 'gate',                 // Permission type (gate or policy)
+            'icon'           => 'fas',                  // Font Awesome icons class
+            'iconName'       => 'fa-database',          // Updated icon name for this main item
+            'iconPath'       => 4,                      // Optional icon size/path
+            'children'       => [                       // Sub-items (children)
 
+                [
+                    'label'          => 'Kelas', // New child item for Kelas management
+                    'type'           => 'item',
+                    'route'          => 'kelas.index',       // Route for Kelas management
+                    'active'         => [],                  // Define when this item is active
+                    'permission'     => [],                  // Permissions required for this item
+                    'permissionType' => 'gate',              // Permission type
+                    'icon'           => 'dot',               // Dot icon for sub-items
+                ],
+            ]
+        ],
 
         // Management User menu item with sub-items (children)
         [

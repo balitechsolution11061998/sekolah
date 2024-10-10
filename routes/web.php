@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\KelasController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegionController;
@@ -133,7 +134,38 @@ Route::prefix('students')
         // Change teacher password or any additional routes you need
     });
 
+    Route::prefix('kelas')
+    ->middleware('auth')
+    ->as('kelas.') // Set a name prefix for all routes in this group
+    ->group(function () {
+        // Teacher Management Dashboard
+        Route::get('/', [KelasController::class, 'index'])
+            ->name('index'); // 'teachers.index'
 
+        // Fetching teacher data for DataTables
+        Route::get('/data', [KelasController::class, 'data'])
+            ->name('data'); // 'teachers.data'
+
+        // Store teacher data (create/update)
+        Route::post('/store', [KelasController::class, 'store'])
+            ->name('store'); // 'teachers.store'
+
+        Route::post('/update', [KelasController::class, 'update'])
+            ->name('update'); // 'teachers.update'
+
+        // Edit teacher data by ID
+        Route::get('/{id}/edit', [KelasController::class, 'edit'])
+            ->name('edit'); // 'teachers.edit'
+
+        Route::get('/show', [KelasController::class, 'show'])
+            ->name('show'); // 'teachers.edit'
+
+        // Delete teacher data by ID
+        Route::delete('/{id}', [KelasController::class, 'destroy'])
+            ->name('destroy'); // 'teachers.destroy'
+
+        // Change teacher password or any additional routes you need
+    });
 // Role management routes
 
 Route::prefix('roles')
