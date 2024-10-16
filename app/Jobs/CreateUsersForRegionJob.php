@@ -49,7 +49,7 @@ class CreateUsersForRegionJob implements ShouldQueue
         $roles = ['administrator', 'siswa', 'guru'];
         $roleIds = Role::whereIn('name', $roles)->pluck('id', 'name')->toArray();
 
-        $kelas = DB::table('kelas')->pluck('kode_kelas', 'id')->toArray();
+        $kelas = DB::table('kelas')->pluck('id')->toArray();
 
         $nisnCounter = 1;
 

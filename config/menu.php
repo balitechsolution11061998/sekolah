@@ -122,7 +122,7 @@ return [
                     'permissionType' => 'gate',               // Permission type
                     'icon'           => 'fas',                // FontAwesome solid icon
                     'iconName'       => 'fa-money-bill-wave', // Icon for Biaya Siswa
-                    'route'          => 'students.index',  // Route for Siswa fees
+                    'route'          => 'biayas.siswa',  // Route for Siswa fees
                     'active'         => [],                   // Define when this item is active
                     'iconPath'       => 4,                    // Optional icon size/path
                 ],

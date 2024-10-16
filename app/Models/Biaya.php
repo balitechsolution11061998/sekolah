@@ -10,4 +10,9 @@ class Biaya extends Model
     use HasFactory;
     protected $table = 'biayas';
     public $guarded = [];
+
+    public function siswaBiaya()
+    {
+        return $this->hasMany(BiayaSiswa::class, 'biaya_id');
+    }
 }

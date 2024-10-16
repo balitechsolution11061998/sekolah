@@ -292,4 +292,9 @@ Route::post('/verify-superadmin-password', [UserController::class, 'verifySupera
             ->name('destroy'); // 'banks.destroy'
 
         // Additional routes can be added here if needed
+        Route::get('/siswa', [BiayaController::class, 'showSiswaBiaya'])
+        ->name('siswa'); // 'biayas.siswa'
+
+        Route::get('/siswa/data', [BiayaController::class, 'showSiswaBiayaData'])
+        ->name('siswa.data'); // 'biayas.siswa'
     });

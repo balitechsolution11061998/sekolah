@@ -21,4 +21,14 @@ class BiayaSiswa extends Model
         'jumlah_angsuran_total',
         'angsuran_terbayar',
     ];
+    public function biaya()
+    {
+        return $this->belongsTo(Biaya::class, 'biaya_id');
+    }
+
+    // Relationship to Siswa
+    public function siswa()
+    {
+        return $this->belongsTo(Student::class, 'siswa_id');
+    }
 }

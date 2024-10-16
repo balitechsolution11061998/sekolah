@@ -156,7 +156,7 @@
                                 <select class="form-select" id="tingkat_rombel" name="tingkat_rombel" required>
                                     <option value="">Select Class Level</option>
                                     @foreach ($kelas as $k)
-                                        <option value="{{ $k->kode_kelas }}">{{ $k->kelas }}</option>
+                                        <option value="{{ $k->id }}">{{ $k->kelas }}</option>
                                         <!-- Adjust to your column name -->
                                     @endforeach
                                 </select>

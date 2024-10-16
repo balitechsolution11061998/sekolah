@@ -10,4 +10,9 @@ class Kelas extends Model
     use HasFactory;
     protected $table = 'kelas';
     public $guarded = [];
+
+    public function kelasSiswa()
+    {
+        return $this->hasMany(Student::class, 'tingkat_rombel');
+    }
 }

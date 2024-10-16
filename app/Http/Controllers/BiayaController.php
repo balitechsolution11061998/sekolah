@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Biaya;
+use App\Models\BiayaSiswa;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -88,4 +89,49 @@ class BiayaController extends Controller
             return response()->json(['success' => false, 'message' => 'Failed to delete Biaya. Error: ' . $e->getMessage()], 500);
         }
     }
+
+    public function showSiswaBiaya()
+    {
+        try {
+
+            return view('biayas.siswa');
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Failed to fetch Biaya Siswa. Error: ' . $e->getMessage()], 500);
+        }
+    }
+
+    // BiayaController.php
+    public function showSiswaBiayaData()
+    {
+        // Fetch the BiayaSiswa data with related Biaya and Siswa data
+        $biayas = BiayaSiswa::with(['biaya', 'siswa']);
+
+        return DataTables::eloquent($biayas)
+            ->addIndexColumn() // Adds the index column for the table
+            ->addColumn('siswa_name', function ($biayaSiswa) {
+                return $biayaSiswa->siswa->nama_lengkap;
+            })
+            ->addColumn('siswa_class', function ($biayaSiswa) {
+                return $biayaSiswa->siswa->kelas->kelas; // Assuming the 'kelas' model has a 'kelas' attribute
+            })
+            ->addColumn('kode_biaya', function ($biayaSiswa) {
+                return $biayaSiswa->biaya->kode_biaya;
+            })
+            ->addColumn('nama_biaya', function ($biayaSiswa) {
+                return $biayaSiswa->biaya->nama_biaya;
+            })
+            ->addColumn('actions', function ($biayaSiswa) {
+                return '<form method="POST" action="' . route('biayas.destroy', $biayaSiswa->id) . '">
+                        ' . csrf_field() . method_field('DELETE') . '
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>';
+            })
+            ->orderColumn('siswa_name', function ($query, $order) {
+                $query->join('students', 'biaya_siswa.siswa_id', '=', 'students.id')
+                    ->orderBy('students.nama_lengkap', $order);
+            })
+            ->rawColumns(['actions'])
+            ->toJson();
+    }
+
 }
