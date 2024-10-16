@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Kelas;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use DataTables; // Import DataTables class
@@ -12,9 +13,12 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
+        // Fetch class levels from the 'kelas' table
+        $kelas = Kelas::all(); // Adjust 'Kelas' to match your model name
 
-        return view('students.index');
+        return view('students.index', compact('kelas'));
     }
+
 
     public function data(Request $request){
             $data = Student::select(['id', 'nama_lengkap', 'nisn', 'nik', 'tempat_lahir', 'tanggal_lahir', 'tingkat_rombel','no_telepon','status','foto_profile']);

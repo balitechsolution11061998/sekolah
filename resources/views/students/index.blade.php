@@ -51,6 +51,7 @@
             /* White text */
         }
     </style>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightbox2@2.11.3/dist/css/lightbox.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastify-js/1.6.1/toastify.css"
@@ -154,11 +155,13 @@
                                 <label for="tingkat_rombel" class="form-label">Class Level</label>
                                 <select class="form-select" id="tingkat_rombel" name="tingkat_rombel" required>
                                     <option value="">Select Class Level</option>
-                                    <option value="Kelas 7">Kelas 7</option>
-                                    <option value="Kelas 8">Kelas 8</option>
-                                    <option value="Kelas 9">Kelas 9</option>
+                                    @foreach ($kelas as $k)
+                                        <option value="{{ $k->kode_kelas }}">{{ $k->kelas }}</option>
+                                        <!-- Adjust to your column name -->
+                                    @endforeach
                                 </select>
                             </div>
+
 
                             <div class="col-md-6 mb-3">
                                 <label for="jenis_kelamin" class="form-label">Gender</label>
@@ -316,7 +319,10 @@
             };
 
             $(document).ready(function() {
-
+                $('#tingkat_rombel').select2({
+                    placeholder: "Select Class Level",
+                    allowClear: true
+                });
 
                 $("#studentForm").validate({
                     rules: {
@@ -587,7 +593,7 @@
                                         stopOnFocus: true,
                                     }).showToast();
                                     $('#students_table').DataTable().ajax
-                                    .reload();
+                                        .reload();
                                 },
                                 error: function(xhr) {
                                     // Show error notification

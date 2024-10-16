@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BankController;
+use App\Http\Controllers\BiayaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\PermissionController;
@@ -256,6 +257,38 @@ Route::post('/verify-superadmin-password', [UserController::class, 'verifySupera
 
         // Delete bank data by ID
         Route::delete('/{id}', [BankController::class, 'destroy'])
+            ->name('destroy'); // 'banks.destroy'
+
+        // Additional routes can be added here if needed
+    });
+
+
+    Route::prefix('biayas')
+    ->middleware('auth')
+    ->as('biayas.') // Set a name prefix for all routes in this group
+    ->group(function () {
+        // Bank Management Dashboard
+        Route::get('/', [BiayaController::class, 'index'])
+            ->name('index'); // 'banks.index'
+
+        // Fetching bank data for DataTables
+        Route::get('/data', [BiayaController::class, 'data'])
+            ->name('data'); // 'banks.data'
+
+        // Store bank data (create/update)
+        Route::post('/store', [BiayaController::class, 'store'])
+            ->name('store'); // 'banks.store'
+
+        // Update bank data
+        Route::post('/update', [BiayaController::class, 'update'])
+            ->name('update'); // 'banks.update'
+
+        // Edit bank data by ID
+        Route::get('/{id}/edit', [BiayaController::class, 'edit'])
+            ->name('edit'); // 'banks.edit'
+
+        // Delete bank data by ID
+        Route::delete('/{id}', [BiayaController::class, 'destroy'])
             ->name('destroy'); // 'banks.destroy'
 
         // Additional routes can be added here if needed

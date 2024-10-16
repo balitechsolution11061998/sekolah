@@ -77,6 +77,56 @@ return [
                     'active'         => [],                 // Define when this item is active
                     'iconPath'       => 4,                  // Optional icon size/path
                 ],
+                [
+                    'label'          => 'Biaya',              // New child item for Biaya management
+                    'type'           => 'item',
+                    'permission'     => [],                   // Permissions required for this item
+                    'permissionType' => 'gate',               // Permission type
+                    'icon'           => 'fas',                // FontAwesome solid icon
+                    'iconName'       => 'fa-money-bill-wave', // Icon for Biaya (using fa-money-bill-wave)
+                    'route'          => 'biayas.index',       // Route for Biaya management
+                    'active'         => [],                   // Define when this item is active
+                    'iconPath'       => 4,                    // Optional icon size/path
+                ],
+
+            ]
+        ],
+        [
+            'label'          => 'Transaksi',          // Main menu label
+            'type'           => 'item',               // Type item (clickable menu item)
+            'permission'     => [],                   // Permissions (empty implies no restrictions)
+            'permissionType' => 'gate',               // Permission type (gate or policy)
+            'icon'           => 'fas',                // Font Awesome icons class
+            'iconName'       => 'fa-exchange-alt',    // Updated icon name for transactions (fa-exchange-alt)
+            'iconPath'       => 4,                    // Optional icon size/path
+            'children'       => [                     // Sub-items (children)
+
+                // Siswa Transaksi
+                [
+                    'label'          => 'Transaksi Siswa',    // Siswa management (transactions)
+                    'type'           => 'item',
+                    'permission'     => [],                   // Permissions required for this item
+                    'permissionType' => 'gate',               // Permission type
+                    'icon'           => 'fas',                // FontAwesome solid icon
+                    'iconName'       => 'fa-user',            // Icon for Transaksi Siswa
+                    'route'          => 'students.index',  // Route for Siswa transactions
+                    'active'         => [],                   // Define when this item is active
+                    'iconPath'       => 4,                    // Optional icon size/path
+                ],
+
+                // Biaya Siswa
+                [
+                    'label'          => 'Biaya Siswa',        // Biaya management (student fees)
+                    'type'           => 'item',
+                    'permission'     => [],                   // Permissions required for this item
+                    'permissionType' => 'gate',               // Permission type
+                    'icon'           => 'fas',                // FontAwesome solid icon
+                    'iconName'       => 'fa-money-bill-wave', // Icon for Biaya Siswa
+                    'route'          => 'students.index',  // Route for Siswa fees
+                    'active'         => [],                   // Define when this item is active
+                    'iconPath'       => 4,                    // Optional icon size/path
+                ],
+
             ]
         ],
 

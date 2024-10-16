@@ -2,10 +2,12 @@
 
 namespace App\Jobs;
 
+use App\Models\Biaya;
+use App\Models\BiayaSiswa;
 use App\Models\Guru;
-use App\Models\User;
 use App\Models\Role;
-use App\Models\Student; // Import the Student model
+use App\Models\User;
+use App\Models\Student;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,86 +15,59 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use Faker\Factory as Faker; // Import Faker
+use Faker\Factory as Faker;
 
 class CreateUsersForRegionJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $timeout = 1200; // Timeout for the job
-    protected $specialEmail = 'sulaksana60@gmail.com'; // Special email for superadministrator
-    protected $newAdminEmail = 'adibintang2167@gmail.com'; // New admin email
-    protected $newAdminUsername = 'adicita179'; // New admin username
-    protected $newAdminPassword = '08129911930'; // New admin password
-    protected $batchSize = 1000; // Number of users per batch
-    protected $totalUsers; // Total number of users to create
+    protected $specialEmail = 'sulaksana60@gmail.com';
+    protected $newAdminEmail = 'adibintang2167@gmail.com';
+    protected $newAdminUsername = 'adicita179';
+    protected $newAdminPassword = '08129911930';
+    protected $batchSize = 1000;
+    protected $totalUsers;
     private $currentYear;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param int $totalUsers
-     */
     public function __construct($totalUsers)
     {
         $this->totalUsers = $totalUsers;
-        $this->currentYear = date('Y'); // Get the current year
+        $this->currentYear = date('Y');
     }
+
     private function generateIndonesianPhoneNumber(): string
     {
-        $phoneNumber = '08' . rand(10000000, 99999999); // Random 10 digits after '08'
-        return $phoneNumber; // Return a simple format
+        $phoneNumber = '08' . rand(10000000, 99999999);
+        return $phoneNumber;
     }
-    /**
-     * Execute the job.
-     */
+
     public function handle(): void
     {
-        // Create a Faker instance
-        $faker = Faker::create('id_ID'); // Specify Indonesian locale
+        $faker = Faker::create('id_ID');
 
-        // Fetch the roles 'administrator', 'siswa', and 'guru'
         $roles = ['administrator', 'siswa', 'guru'];
         $roleIds = Role::whereIn('name', $roles)->pluck('id', 'name')->toArray();
 
-        // Fetch available kelas (classes)
         $kelas = DB::table('kelas')->pluck('kode_kelas', 'id')->toArray();
 
-        // NISN counter
         $nisnCounter = 1;
 
-        // Generate users in batches
         for ($batch = 0; $batch < ceil($this->totalUsers / $this->batchSize); $batch++) {
             $usersBatch = [];
-            $studentsBatch = []; // To hold students data
-            $teachersBatch = []; // To hold teachers data
+            $studentsBatch = [];
+            $teachersBatch = [];
 
             for ($i = 1; $i <= $this->batchSize; $i++) {
                 $index = ($batch * $this->batchSize) + $i;
-                if ($index > $this->totalUsers) {
-                    break;
-                }
+                if ($index > $this->totalUsers) break;
 
-                // Assign special email for the first user
-                if ($index === 1) {
-                    $email = $this->specialEmail;
-                } elseif ($index === 2) {
-                    $email = $this->newAdminEmail; // New admin email for the second user
-                } else {
-                    $email = "user_{$index}@example.com";
-                }
+                $email = ($index === 1) ? $this->specialEmail :
+                         (($index === 2) ? $this->newAdminEmail : "user_{$index}@example.com");
 
-                // Generate a random name using Faker
-                $fullName = $faker->name; // Generates a random name
-
-                // Prepare user data for batch insert
-                if ($email === $this->newAdminEmail) {
-                    $plainPassword = $this->newAdminPassword; // Use specified password for new admin
-                } elseif ($email === $this->specialEmail) {
-                    $plainPassword = 'Superman2000@'; // Password for super administrator
-                } else {
-                    $plainPassword = 'password'; // Default password
-                }
+                $fullName = $faker->name;
+                $plainPassword = ($email === $this->newAdminEmail) ? $this->newAdminPassword :
+                                (($email === $this->specialEmail) ? 'Superman2000@' : 'password');
 
                 $usersBatch[] = [
                     'name' => $fullName,
@@ -105,39 +80,36 @@ class CreateUsersForRegionJob implements ShouldQueue
                     'updated_at' => now(),
                 ];
 
-                // Check if the user is a 'guru' or 'siswa'
-                if ($index > 2) { // Assuming all users after the second are students
-                    if ($index % 2 == 0) { // Example condition to assign some users as teachers
-                        // Prepare teacher data
-                        $nip = str_pad(rand(0, 9999999999999999), 18, '0', STR_PAD_LEFT); // Generate 18-digit NIP
-                        $nuptk = str_pad(rand(0, 9999999999999999), 16, '0', STR_PAD_LEFT); // Generate 16-digit NUPTK
+                if ($index > 2) {
+                    if ($index % 2 == 0) {
+                        $nip = str_pad(rand(0, 9999999999999999), 18, '0', STR_PAD_LEFT);
+                        $nuptk = str_pad(rand(0, 9999999999999999), 16, '0', STR_PAD_LEFT);
 
                         $teachersBatch[] = [
-                            'user_id' => null, // To be filled after user insert
+                            'user_id' => null,
                             'nama_lengkap' => $fullName,
-                            'gelar' => 'S.Pd.', // Example title
+                            'gelar' => 'S.Pd.',
                             'nip' => $nip,
                             'jenis_kelamin' => $faker->randomElement(['L', 'P']),
                             'tempat_lahir' => $faker->city,
-                            'tanggal_lahir' => $faker->dateTimeBetween('-50 years', '-30 years'), // Random birthdate
+                            'tanggal_lahir' => $faker->dateTimeBetween('-50 years', '-30 years'),
                             'nuptk' => $nuptk,
                             'alamat' => $faker->address,
-                            'avatar' => '/storage/default_avatar.png', // Placeholder avatar
+                            'avatar' => '/storage/default_avatar.png',
                             'created_at' => now(),
                             'updated_at' => now(),
                         ];
                     } else {
-                        // Prepare student data
-                        $nisn = $this->currentYear . str_pad($nisnCounter++, 6, '0', STR_PAD_LEFT); // Generate NISN
-                        $nik = str_pad(rand(0, 9999999999999999), 16, '0', STR_PAD_LEFT); // Generate 16-digit NIK
+                        $nisn = $this->currentYear . str_pad($nisnCounter++, 6, '0', STR_PAD_LEFT);
+                        $nik = str_pad(rand(0, 9999999999999999), 16, '0', STR_PAD_LEFT);
+                        $tingkatRombel = $kelas[array_rand($kelas)];
 
-                        $tingkatRombel = $kelas[array_rand($kelas)]; // Randomly assign a class
                         $studentsBatch[] = [
                             'nama_lengkap' => $fullName,
                             'nisn' => $nisn,
                             'nik' => $nik,
                             'tempat_lahir' => $faker->city,
-                            'tanggal_lahir' => $faker->dateTimeBetween('-20 years', '-10 years'), // Random birthdate
+                            'tanggal_lahir' => $faker->dateTimeBetween('-20 years', '-10 years'),
                             'tingkat_rombel' => $tingkatRombel,
                             'umur' => rand(10, 20),
                             'status' => 'Active',
@@ -158,48 +130,69 @@ class CreateUsersForRegionJob implements ShouldQueue
                 }
             }
 
-            // Insert users in bulk
             DB::transaction(function () use ($usersBatch, $roleIds, $studentsBatch, $teachersBatch) {
                 User::insert($usersBatch);
 
-                // Prepare role assignments in bulk
-                $roleAssignments = [];
                 $userIds = User::whereIn('email', array_column($usersBatch, 'email'))->pluck('id', 'email')->toArray();
+                $roleAssignments = [];
 
                 foreach ($usersBatch as $userData) {
                     $userId = $userIds[$userData['email']];
-                    $userRole = ($userData['email'] === $this->specialEmail) ? $roleIds['administrator'] :
-                                ($userData['email'] === $this->newAdminEmail ? $roleIds['administrator'] : $roleIds[array_rand($roleIds)]);
+                    $userRole = ($userData['email'] === $this->specialEmail || $userData['email'] === $this->newAdminEmail) ?
+                                $roleIds['administrator'] : $roleIds[array_rand($roleIds)];
+
                     $roleAssignments[] = [
                         'role_id' => $userRole,
                         'user_id' => $userId,
                         'user_type' => 'App\Models\User',
                     ];
 
-                    // If the user is a teacher, store the user_id in teachersBatch
-                    if (in_array($userRole, [$roleIds['guru']])) {
-                        // Find the last teacher in the batch and assign user_id
-                        if (!empty($teachersBatch)) {
-                            $teachersBatch[array_key_last($teachersBatch)]['user_id'] = $userId; // Set the user_id for the last teacher
+                    if ($userRole == $roleIds['guru']) {
+                        foreach ($teachersBatch as &$teacher) {
+                            if ($teacher['user_id'] === null) {
+                                $teacher['user_id'] = $userId;
+                                break;
+                            }
                         }
                     }
                 }
 
-                // Insert role assignments in bulk
                 DB::table('role_user')->insert($roleAssignments);
-
-                // Insert students and teachers in bulk if any
-                if (!empty($studentsBatch)) {
-                    Student::insert($studentsBatch);
-                }
-
-                if (!empty($teachersBatch)) {
-                    Guru::insert($teachersBatch);
-                }
+                Student::insert($studentsBatch);
+                Guru::insert($teachersBatch);
             });
 
-            // Log batch progress
             \Log::info("Batch {$batch} of " . ceil($this->totalUsers / $this->batchSize) . " completed. Users created: " . count($usersBatch));
+        }
+
+        $students = Student::all();
+        $biayas = Biaya::all();
+
+        foreach ($students as $student) {
+            foreach ($biayas as $biaya) {
+                $periode = $faker->randomElement(['bulanan', 'tahunan']);
+                $jumlah = $faker->numberBetween(500000, 5000000);
+                $is_angsur = $faker->boolean;
+                $jumlah_angsuran_total = $is_angsur ? $faker->numberBetween(2, 12) : null;
+                $jumlah_angsur = $is_angsur ? (int)($jumlah / $jumlah_angsuran_total) : null;
+                $angsuran_terbayar = $is_angsur ? $faker->numberBetween(0, $jumlah_angsuran_total) : 0;
+
+                $tanggal_mulai = $faker->date();
+                $tanggal_akhir = ($periode == 'bulanan') ? $faker->dateTimeBetween($tanggal_mulai, '+1 month') : $faker->dateTimeBetween($tanggal_mulai, '+1 year');
+
+                BiayaSiswa::create([
+                    'biaya_id' => $biaya->id,
+                    'siswa_id' => $student->id,
+                    'periode' => $periode,
+                    'jumlah' => $jumlah,
+                    'is_angsur' => $is_angsur,
+                    'jumlah_angsuran_total' => $jumlah_angsuran_total,
+                    'jumlah_angsur' => $jumlah_angsur,
+                    'angsuran_terbayar' => $angsuran_terbayar,
+                    'tanggal_mulai' => $tanggal_mulai,
+                    'tanggal_akhir' => $tanggal_akhir,
+                ]);
+            }
         }
     }
 }
