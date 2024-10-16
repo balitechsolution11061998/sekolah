@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('guru', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->unique()->unsigned();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('nama_lengkap', 100);
             $table->string('gelar', 10);
             $table->string('nip', 18)->unique()->nullable();
