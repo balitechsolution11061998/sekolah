@@ -7,6 +7,7 @@ use App\Models\Kelas;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Validation\Rule;
+
 class KelasController extends Controller
 {
     public function index()
@@ -41,15 +42,11 @@ class KelasController extends Controller
     public function store(Request $request)
     {
         $id = $request->id;
+
         // Define validation rules
         $rules = [
-            'tingkatan' => 'required|string',
-            'suffix' => 'nullable|string',
-            'guru_id' => [
-                'nullable',
-                'string',
-                Rule::unique('kelas', 'guru_id')->ignore($id), // Ensure guru_id is unique, ignoring the current record if updating
-            ],
+            'kode_kelas' => 'required|string|unique:kelas,kode_kelas' . ($id ? ',' . $id : ''),
+            'kelas' => 'nullable|string',
         ];
 
         // Validate the request
@@ -59,11 +56,11 @@ class KelasController extends Controller
             if ($id) {
                 // Update existing Kelas
                 $kelas = Kelas::findOrFail($id);
-                $kelas->update($request->all());
+                $kelas->update($request->only(['kode_kelas', 'kelas']));
                 $message = 'Kelas updated successfully.';
             } else {
                 // Create new Kelas
-                Kelas::create($request->all());
+                Kelas::create($request->only(['kode_kelas', 'kelas']));
                 $message = 'Kelas created successfully.';
             }
 
@@ -76,7 +73,6 @@ class KelasController extends Controller
             return response()->json(['success' => false, 'message' => 'Failed to save Kelas. Error: ' . $e->getMessage()]);
         }
     }
-
 
     public function edit($id)
     {
@@ -91,7 +87,7 @@ class KelasController extends Controller
     public function destroy($id)
     {
         try {
-            $kelas = Kelas::findOrFail($id)->delete();
+            Kelas::findOrFail($id)->delete();
             // Return a JSON response indicating success
             return response()->json([
                 'success' => true,

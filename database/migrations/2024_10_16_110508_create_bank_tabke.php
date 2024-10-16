@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kelas', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('kode_kelas');
-            $table->string('kelas')->nullable();
+        Schema::create('banks', function(Blueprint $table){
+            $table->increments('id'); // Use increments for auto-incrementing id
+            $table->string('sandi_bank',20);
+            $table->string('nama_bank');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kelas');
+        Schema::dropIfExists('banks');
     }
 };

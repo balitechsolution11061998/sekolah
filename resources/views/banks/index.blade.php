@@ -1,5 +1,5 @@
 <x-default-layout>
-    @section('title', 'Kelas Management')
+    @section('title', 'Bank Management')
 
     @push('styles')
         <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
@@ -9,16 +9,16 @@
     <div class="container mt-5">
         <div class="card shadow-sm rounded">
             <div class="card-body">
-                <h2 class="mb-4">Kelas Management</h2>
-                <button class="btn btn-primary btn-sm mb-3" data-bs-toggle="modal" data-bs-target="#createKelasModal">
-                    <i class="fas fa-plus"></i> Add New Kelas
+                <h2 class="mb-4">Bank Management</h2>
+                <button class="btn btn-primary btn-sm mb-3" data-bs-toggle="modal" data-bs-target="#createBankModal">
+                    <i class="fas fa-plus"></i> Add New Bank
                 </button>
-                <table id="kelasTable" class="table table-striped table-bordered" style="width:100%">
+                <table id="bankTable" class="table table-striped table-bordered" style="width:100%">
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Kode Kelas</th>
-                            <th>Kelas</th>
+                            <th>Kode Bank</th>
+                            <th>Nama Bank</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -30,27 +30,27 @@
         </div>
     </div>
 
-    <!-- Create Kelas Modal -->
-    <div class="modal fade" id="createKelasModal" tabindex="-1" aria-labelledby="createKelasModalLabel"
+    <!-- Create Bank Modal -->
+    <div class="modal fade" id="createBankModal" tabindex="-1" aria-labelledby="createBankModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
-            <form id="kelasForm" action="{{ route('kelas.store') }}" method="POST">
+            <form id="bankForm" action="{{ route('banks.store') }}" method="POST">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="createKelasModalLabel">Add New Kelas</h5>
+                        <h5 class="modal-title" id="createBankModalLabel">Add New Bank</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="id" id="id">
                         <div class="form-group mb-3">
-                            <label for="kode_kelas">Kode Kelas</label>
-                            <input type="text" class="form-control" id="kode_kelas" name="kode_kelas" maxlength="10" required>
+                            <label for="sandi_bank">Kode Bank</label>
+                            <input type="text" class="form-control" id="sandi_bank" name="sandi_bank" maxlength="20" required>
                         </div>
 
                         <div class="form-group mb-3">
-                            <label for="kelas">Kelas</label>
-                            <input type="text" class="form-control" id="kelas" name="kelas" maxlength="125" required>
+                            <label for="nama_bank">Nama Bank</label>
+                            <input type="text" class="form-control" id="nama_bank" name="nama_bank" maxlength="125" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -78,14 +78,14 @@
         <script>
             $(document).ready(function() {
                 // Initialize DataTables with Bootstrap 5 styling
-                $('#kelasTable').DataTable({
+                $('#bankTable').DataTable({
                     processing: true,
                     serverSide: true,
-                    ajax: '{{ route('kelas.data') }}',
+                    ajax: '{{ route('banks.data') }}',
                     columns: [
                         { data: 'id', name: 'id' },
-                        { data: 'kode_kelas', name: 'kode_kelas' },
-                        { data: 'kelas', name: 'kelas' },
+                        { data: 'sandi_bank', name: 'sandi_bank' },
+                        { data: 'nama_bank', name: 'nama_bank' },
                         {
                             data: 'actions',
                             name: 'actions',
@@ -113,26 +113,26 @@
                     ]
                 });
 
-                // Edit Kelas
-                $(document).on('click', '.edit-kelas', function() {
+                // Edit Bank
+                $(document).on('click', '.edit-bank', function() {
                     var id = $(this).data('id');
                     $.ajax({
                         type: 'GET',
-                        url: '/kelas/' + id + '/edit',
+                        url: '/banks/' + id + '/edit',
                         success: function(data) {
                             if (data.error) {
                                 alert(data.error);
                             } else {
-                                $('#kelasForm').attr('action', '/kelas/' + id);
+                                $('#bankForm').attr('action', '/banks/' + id);
                                 $('#id').val(data.id);
-                                $('#kode_kelas').val(data.kode_kelas);
-                                $('#kelas').val(data.kelas);
-                                $('#createKelasModal').modal('show');
+                                $('#sandi_bank').val(data.sandi_bank);
+                                $('#nama_bank').val(data.nama_bank);
+                                $('#createBankModal').modal('show');
                             }
                         },
                         error: function(xhr) {
                             if (xhr.status === 404) {
-                                alert('Kelas not found');
+                                alert('Bank not found');
                             } else {
                                 alert('An error occurred while fetching the data');
                             }
@@ -141,7 +141,7 @@
                 });
 
                 // Handle form submission
-                $('#kelasForm').submit(function(event) {
+                $('#bankForm').submit(function(event) {
                     event.preventDefault();
 
                     Swal.fire({
@@ -155,7 +155,7 @@
                         if (result.isConfirmed) {
                             $.ajax({
                                 type: 'POST',
-                                url: '{{ route('kelas.store') }}',
+                                url: '{{ route('banks.store') }}',
                                 data: $(this).serialize(),
                                 success: function(response) {
                                     if (response.success) {
@@ -166,8 +166,8 @@
                                             position: 'right',
                                             backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)',
                                         }).showToast();
-                                        $('#createKelasModal').modal('hide');
-                                        $('#kelasTable').DataTable().ajax.reload();
+                                        $('#createBankModal').modal('hide');
+                                        $('#bankTable').DataTable().ajax.reload();
                                     } else {
                                         Toastify({
                                             text: response.message,
@@ -180,7 +180,7 @@
                                 },
                                 error: function(xhr, status, error) {
                                     Toastify({
-                                        text: 'Failed to create Kelas.',
+                                        text: 'Failed to create Bank.',
                                         duration: 3000,
                                         gravity: 'top',
                                         position: 'right',
@@ -192,10 +192,10 @@
                     });
                 });
 
-                // Delete Kelas
-                $(document).on('click', '.delete-kelas', function() {
+                // Delete Bank
+                $(document).on('click', '.delete-bank', function() {
                     var id = $(this).data('id');
-                    var url = '/kelas/' + id;
+                    var url = '/banks/' + id;
 
                     Swal.fire({
                         title: 'Are you sure?',
@@ -213,11 +213,11 @@
                                 success: function(response) {
                                     if (response.success) {
                                         Swal.fire('Deleted!', 'Your record has been deleted.', 'success');
-                                        $('#kelasTable').DataTable().ajax.reload();
+                                        $('#bankTable').DataTable().ajax.reload();
                                     }
                                 },
                                 error: function(xhr, status, error) {
-                                    Swal.fire('Failed', 'Kelas deletion failed!', 'error');
+                                    Swal.fire('Failed', 'Bank deletion failed!', 'error');
                                 }
                             });
                         }

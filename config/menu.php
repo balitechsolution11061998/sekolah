@@ -24,29 +24,7 @@ return [
             'type'  => 'heading' // This represents a section heading (non-clickable)
         ],
         [
-            'label'          => 'Siswa',
-            'type'           => 'item',
-            'permission'     => [],
-            'permissionType' => 'gate',
-            'icon'           => 'fas', // FontAwesome solid icon
-            'iconName'       => 'fa-user', // Icon for students (fa-user)
-            'route'          => 'students.index',
-            'active'         => [],
-            'iconPath'       => 4,
-        ],
-        [
-            'label'          => 'Guru',
-            'type'           => 'item',
-            'permission'     => [],
-            'permissionType' => 'gate',
-            'icon'           => 'fas', // FontAwesome solid icon
-            'iconName'       => 'fa-chalkboard-teacher', // Icon for teachers (fa-chalkboard-teacher)
-            'route'          => 'teachers.index',
-            'active'         => [],
-            'iconPath'       => 4,
-        ],
-        [
-            'label'          => 'Master Data',          // Updated main menu label
+            'label'          => 'Master Data',          // Main menu label
             'type'           => 'item',                 // Type item (clickable menu item)
             'permission'     => [],                     // Permissions (empty implies no restrictions)
             'permissionType' => 'gate',                 // Permission type (gate or policy)
@@ -56,16 +34,53 @@ return [
             'children'       => [                       // Sub-items (children)
 
                 [
-                    'label'          => 'Kelas', // New child item for Kelas management
+                    'label'          => 'Siswa',         // Siswa management
                     'type'           => 'item',
-                    'route'          => 'kelas.index',       // Route for Kelas management
-                    'active'         => [],                  // Define when this item is active
-                    'permission'     => [],                  // Permissions required for this item
-                    'permissionType' => 'gate',              // Permission type
-                    'icon'           => 'dot',               // Dot icon for sub-items
+                    'permission'     => [],               // Permissions required for this item
+                    'permissionType' => 'gate',           // Permission type
+                    'icon'           => 'fas',            // FontAwesome solid icon
+                    'iconName'       => 'fa-user',        // Icon for students
+                    'route'          => 'students.index',  // Route for Siswa management
+                    'active'         => [],                // Define when this item is active
+                    'iconPath'       => 4,
+                ],
+                [
+                    'label'          => 'Guru',          // Guru management
+                    'type'           => 'item',
+                    'permission'     => [],               // Permissions required for this item
+                    'permissionType' => 'gate',           // Permission type
+                    'icon'           => 'fas',            // FontAwesome solid icon
+                    'iconName'       => 'fa-chalkboard-teacher', // Icon for teachers
+                    'route'          => 'teachers.index',  // Route for Guru management
+                    'active'         => [],                // Define when this item is active
+                    'iconPath'       => 4,
+                ],
+                [
+                    'label'          => 'Kelas',          // New child item for Kelas management
+                    'type'           => 'item',
+                    'permission'     => [],                 // Permissions required for this item
+                    'permissionType' => 'gate',             // Permission type
+                    'icon'           => 'fas',              // FontAwesome solid icon
+                    'iconName'       => 'fa-chalkboard',    // Icon for Kelas (using fa-chalkboard)
+                    'route'          => 'kelas.index',      // Route for Kelas management
+                    'active'         => [],                 // Define when this item is active
+                    'iconPath'       => 4,                  // Optional icon size/path
+                ],
+                [
+                    'label'          => 'Bank',           // New child item for Bank management
+                    'type'           => 'item',
+                    'permission'     => [],                 // Permissions required for this item
+                    'permissionType' => 'gate',             // Permission type
+                    'icon'           => 'fas',              // FontAwesome solid icon
+                    'iconName'       => 'fa-university',    // Icon for Bank (using fa-university)
+                    'route'          => 'banks.index',      // Route for Bank management
+                    'active'         => [],                 // Define when this item is active
+                    'iconPath'       => 4,                  // Optional icon size/path
                 ],
             ]
         ],
+
+
 
         // Management User menu item with sub-items (children)
         [
@@ -85,6 +100,7 @@ return [
                     'permission'     => [],              // Permissions required for this item
                     'permissionType' => 'gate',          // Permission type
                     'icon'           => 'dot',           // Optional small icon for child items
+
                 ],
                 [
                     'label'          => 'Roles',         // Child item for managing roles

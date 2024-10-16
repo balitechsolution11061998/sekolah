@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\BankController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\PermissionController;
@@ -227,3 +228,35 @@ Route::post('/remove-profile-picture', [ProfileController::class, 'removePicture
 // Verify Superadmin password route
 Route::post('/verify-superadmin-password', [UserController::class, 'verifySuperadminPassword'])
     ->name('management.verifySuperadminPassword');
+
+
+    Route::prefix('banks')
+    ->middleware('auth')
+    ->as('banks.') // Set a name prefix for all routes in this group
+    ->group(function () {
+        // Bank Management Dashboard
+        Route::get('/', [BankController::class, 'index'])
+            ->name('index'); // 'banks.index'
+
+        // Fetching bank data for DataTables
+        Route::get('/data', [BankController::class, 'data'])
+            ->name('data'); // 'banks.data'
+
+        // Store bank data (create/update)
+        Route::post('/store', [BankController::class, 'store'])
+            ->name('store'); // 'banks.store'
+
+        // Update bank data
+        Route::post('/update', [BankController::class, 'update'])
+            ->name('update'); // 'banks.update'
+
+        // Edit bank data by ID
+        Route::get('/{id}/edit', [BankController::class, 'edit'])
+            ->name('edit'); // 'banks.edit'
+
+        // Delete bank data by ID
+        Route::delete('/{id}', [BankController::class, 'destroy'])
+            ->name('destroy'); // 'banks.destroy'
+
+        // Additional routes can be added here if needed
+    });
