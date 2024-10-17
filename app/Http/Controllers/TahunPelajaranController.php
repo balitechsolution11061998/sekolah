@@ -18,9 +18,14 @@ class TahunPelajaranController extends Controller
         $tahunPelajarans = TahunPelajaran::select(['id', 'kode_tahun', 'tahun']);
         return DataTables::of($tahunPelajarans)
             ->addColumn('actions', function ($row) {
-                return '<button class="edit-tahun" data-id="' . $row->id . '">Edit</button>
-                        <button class="delete-tahun" data-id="' . $row->id . '">Delete</button>';
+                return '<button class="btn btn-warning btn-sm edit-tahun" data-id="' . $row->id . '">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn btn-danger btn-sm delete-tahun" data-id="' . $row->id . '">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>';
             })
+            ->rawColumns(['actions']) // Ensure that the actions column is rendered as HTML
             ->make(true);
     }
 
