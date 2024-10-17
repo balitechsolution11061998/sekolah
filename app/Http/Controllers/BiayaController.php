@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Biaya;
 use App\Models\BiayaSiswa;
+use App\Models\Student;
+use Exception;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use Spatie\Activitylog\Models\Activity;
 
 class BiayaController extends Controller
 {
@@ -94,9 +97,48 @@ class BiayaController extends Controller
     {
         try {
 
-            return view('biayas.siswa');
+            return view('biayas.siswa'); // Pass the data to the view
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Failed to fetch Biaya Siswa. Error: ' . $e->getMessage()], 500);
+        }
+    }
+    public function select(Request $request)
+    {
+        $biaya = Biaya::select('id', 'nama_biaya as text'); // Customize according to your model
+
+        return response()->json($biaya->get());
+    }
+
+    public function biayaSiswa(Request $request)
+    {
+        try {
+            // Validate the incoming request
+            $validatedData = $request->validate([
+                'siswa_id' => 'required|integer',
+                'biaya_id' => 'required|integer',
+                'jumlah' => 'required|numeric',
+                'periode' => 'required|string',
+                'tanggal_mulai' => 'required|date',
+                'tanggal_akhir' => 'nullable|date',
+                'status' => 'required|string',
+                'is_angsur' => 'required|boolean',
+                'jumlah_angsur' => 'nullable|numeric',
+                'jumlah_angsuran_total' => 'nullable|numeric',
+                'angsuran_terbayar' => 'nullable|numeric',
+            ]);
+
+            // Log the activity before saving
+
+            // Save the data to the database
+            $biayaSiswa = BiayaSiswa::create($validatedData);
+
+            // Log the successful creation
+
+            return response()->json(['message' => 'Biaya siswa berhasil disimpan!'], 201);
+        } catch (Exception $e) {
+            // Log the error
+            dd($e->getMessage());
+            return response()->json(['message' => 'Terjadi kesalahan saat menyimpan biaya siswa.'], 500);
         }
     }
 
@@ -133,5 +175,4 @@ class BiayaController extends Controller
             ->rawColumns(['actions'])
             ->toJson();
     }
-
 }

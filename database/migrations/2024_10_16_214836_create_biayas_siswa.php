@@ -23,7 +23,7 @@ return new class extends Migration
             $table->boolean('is_angsur')->default(false);  // Indicates if payment is in installments
             $table->integer('jumlah_angsur')->nullable();  // Amount per installment (if paying in installments)
             $table->integer('jumlah_angsuran_total')->nullable();  // Total number of installments (if applicable)
-            $table->integer('angsuran_terbayar')->default(0);  // Number of installments paid
+            $table->integer('angsuran_terbayar')->default(0)->nullable(); // Number of installments paid
             $table->timestamps();
         });
 

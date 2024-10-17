@@ -12,6 +12,7 @@ use App\Http\Controllers\RegionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SekolahController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\TahunPelajaranController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
@@ -104,6 +105,9 @@ Route::prefix('students')
             ->name('destroy'); // 'management.users.destroy'
 
         // Change user password
+
+        Route::get('/select', [StudentController::class, 'select'])
+        ->name('select'); // 'management.users.data'
 
     });
 
@@ -297,4 +301,40 @@ Route::post('/verify-superadmin-password', [UserController::class, 'verifySupera
 
         Route::get('/siswa/data', [BiayaController::class, 'showSiswaBiayaData'])
         ->name('siswa.data'); // 'biayas.siswa'
+
+        Route::post('/siswa/store', [BiayaController::class, 'biayaSiswa'])
+        ->name('siswa.store'); // 'banks.store'
+
+        Route::get('/select', [BiayaController::class, 'select'])
+        ->name('select'); // 'banks.data'
+    });
+
+
+    Route::prefix('tahun-pelajarans')
+    ->middleware('auth')
+    ->as('tahun-pelajarans.') // Set a name prefix for all routes in this group
+    ->group(function () {
+        // Tahun Pelajaran Management Dashboard
+        Route::get('/', [TahunPelajaranController::class, 'index'])
+            ->name('index'); // 'tahun-pelajarans.index'
+
+        // Fetching tahun pelajaran data for DataTables
+        Route::get('/data', [TahunPelajaranController::class, 'data'])
+            ->name('data'); // 'tahun-pelajarans.data'
+
+        // Store tahun pelajaran data (create/update)
+        Route::post('/store', [TahunPelajaranController::class, 'store'])
+            ->name('store'); // 'tahun-pelajarans.store'
+
+        // Edit tahun pelajaran data by ID
+        Route::get('/{id}/edit', [TahunPelajaranController::class, 'edit'])
+            ->name('edit'); // 'tahun-pelajarans.edit'
+
+        // Update tahun pelajaran data
+        Route::post('/{id}', [TahunPelajaranController::class, 'update'])
+            ->name('update'); // 'tahun-pelajarans.update'
+
+        // Delete tahun pelajaran data by ID
+        Route::delete('/{id}', [TahunPelajaranController::class, 'destroy'])
+            ->name('destroy'); // 'tahun-pelajarans.destroy'
     });

@@ -88,6 +88,17 @@ return [
                     'active'         => [],                   // Define when this item is active
                     'iconPath'       => 4,                    // Optional icon size/path
                 ],
+                [
+                    'label'          => 'Tahun Pelajaran',    // New child item for Tahun Pelajaran management
+                    'type'           => 'item',
+                    'permission'     => [],                   // Permissions required for this item
+                    'permissionType' => 'gate',               // Permission type
+                    'icon'           => 'fas',                // FontAwesome solid icon
+                    'iconName'       => 'fa-calendar',        // Icon for Tahun Pelajaran (using fa-calendar)
+                    'route'          => 'tahun-pelajarans.index',  // Route for Tahun Pelajaran management
+                    'active'         => [],                   // Define when this item is active
+                    'iconPath'       => 4,                    // Optional icon size/path
+                ],
 
             ]
         ],

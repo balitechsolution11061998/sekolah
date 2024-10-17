@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Kelas;
@@ -20,12 +21,40 @@ class StudentController extends Controller
     }
 
 
-    public function data(Request $request){
-            $data = Student::select(['id', 'nama_lengkap', 'nisn', 'nik', 'tempat_lahir', 'tanggal_lahir', 'tingkat_rombel','no_telepon','status','foto_profile']);
-            return Datatables::of($data)
-                ->make(true);
-
+    public function data(Request $request)
+    {
+        $data = Student::select(['id', 'nama_lengkap', 'nisn', 'nik', 'tempat_lahir', 'tanggal_lahir', 'tingkat_rombel', 'no_telepon', 'status', 'foto_profile']);
+        return Datatables::of($data)
+            ->make(true);
     }
+
+    public function select(Request $request)
+    {
+        $query = Student::query();
+
+        // If a search term is provided, filter by `nama_lengkap`, `nisn`, or `id`
+        if ($request->has('q')) {
+            $search = $request->input('q');
+            $query->where('nama_lengkap', 'like', '%' . $search . '%')
+                  ->orWhere('nisn', 'like', '%' . $search . '%')
+                  ->orWhere('id', 'like', '%' . $search . '%');
+        }
+
+        // Fetch the students with both `nama_lengkap` and `nisn`
+        $siswa = $query->select('id', 'nama_lengkap', 'nisn')->get();
+
+        // Format the response for `select2`
+        $formattedSiswa = $siswa->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'nama_lengkap' => $item->nama_lengkap,
+                'nisn' => $item->nisn
+            ];
+        });
+
+        return response()->json($formattedSiswa);
+    }
+
 
     /**
      * Show the form for creating a new resource.
