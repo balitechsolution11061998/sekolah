@@ -10,4 +10,8 @@ class TahunPelajaran extends Model
     use HasFactory;
     protected $table = 'tapel';
     public $guarded = [];
+    public function mapels()
+    {
+        return $this->hasMany(Mapel::class, 'tapel_id');
+    }
 }

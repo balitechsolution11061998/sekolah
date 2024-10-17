@@ -454,27 +454,33 @@
                     columns: [{
                             data: 'id',
                             name: 'id',
-                            className: 'text-center'
+                            className: 'text-center',
+                            searchable: false // Make ID column non-searchable
                         },
                         {
                             data: 'nama_lengkap',
-                            name: 'nama_lengkap'
+                            name: 'nama_lengkap',
+                            searchable: true // Enable searching for nama_lengkap
                         },
                         {
                             data: 'nisn',
-                            name: 'nisn'
+                            name: 'nisn',
+                            searchable: true // Enable searching for nisn
                         },
                         {
                             data: 'nik',
-                            name: 'nik'
+                            name: 'nik',
+                            searchable: true // Enable searching for nik
                         },
                         {
                             data: 'no_telepon',
-                            name: 'no_telepon'
+                            name: 'no_telepon',
+                            searchable: false // Make no_telepon non-searchable
                         },
                         {
                             data: 'tingkat_rombel',
-                            name: 'tingkat_rombel'
+                            name: 'tingkat_rombel',
+                            searchable: false // Make tingkat_rombel non-searchable
                         },
                         {
                             data: 'foto_profile',
@@ -482,7 +488,8 @@
                             className: 'text-center',
                             render: function(data, type, row) {
                                 return `<a href="${data}" data-lightbox="foto-profile" data-title="${row.nama_lengkap}"><img src="${data}" width="50" height="50"></a>`;
-                            }
+                            },
+                            searchable: false // Make foto_profile non-searchable
                         },
                         {
                             data: 'status',
@@ -493,13 +500,14 @@
                                 let badgeClass = data === 'Active' ? 'badge bg-success' :
                                     'badge bg-danger';
                                 return `<span class="${badgeClass}"><i class="fas ${icon}"></i> ${data}</span>`;
-                            }
+                            },
+                            searchable: false // Make status non-searchable
                         },
                         {
                             data: 'id',
                             name: 'actions',
                             orderable: false,
-                            searchable: false,
+                            searchable: false, // Make actions non-searchable
                             className: 'text-center',
                             render: function(data, type, row) {
                                 return `
@@ -548,7 +556,7 @@
                         info: "Showing _START_ to _END_ of _TOTAL_ students",
                     },
                     order: [
-                        [0, 'asc']
+                        [0, 'asc'] // Default sorting by ID
                     ],
                     initComplete: function() {
                         // Wrap the table in a responsive div

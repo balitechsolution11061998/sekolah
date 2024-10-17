@@ -6,6 +6,7 @@ use App\Http\Controllers\BankController;
 use App\Http\Controllers\BiayaController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KelasController;
+use App\Http\Controllers\MapelController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegionController;
@@ -337,4 +338,17 @@ Route::post('/verify-superadmin-password', [UserController::class, 'verifySupera
         // Delete tahun pelajaran data by ID
         Route::delete('/{id}', [TahunPelajaranController::class, 'destroy'])
             ->name('destroy'); // 'tahun-pelajarans.destroy'
+    });
+
+
+    Route::prefix('mapels')
+    ->middleware('auth')
+    ->as('mapels.') // Set a name prefix for all routes in this group
+    ->group(function () {
+        Route::get('/', [MapelController::class, 'index'])->name('index'); // 'mapels.index'
+        Route::get('/data', [MapelController::class, 'data'])->name('data'); // 'mapels.data'
+        Route::post('/store', [MapelController::class, 'store'])->name('store'); // 'mapels.store'
+        Route::get('/{id}/edit', [MapelController::class, 'edit'])->name('edit'); // 'mapels.edit'
+        Route::post('/{id}', [MapelController::class, 'update'])->name('update'); // 'mapels.update'
+        Route::delete('/{id}', [MapelController::class, 'destroy'])->name('destroy'); // 'mapels.destroy'
     });

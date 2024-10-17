@@ -99,6 +99,17 @@ return [
                     'active'         => [],                   // Define when this item is active
                     'iconPath'       => 4,                    // Optional icon size/path
                 ],
+                [
+                    'label'          => 'Mata Pelajaran',    // Mata Pelajaran management (new item)
+                    'type'           => 'item',
+                    'permission'     => [],                   // Permissions required for this item
+                    'permissionType' => 'gate',               // Permission type
+                    'icon'           => 'fas',                // FontAwesome solid icon
+                    'iconName'       => 'fa-book',            // Icon for Mata Pelajaran
+                    'route'          => 'mapels.index',       // Route for Mata Pelajaran management
+                    'active'         => [],                   // Define when this item is active
+                    'iconPath'       => 4,                    // Optional icon size/path
+                ],
 
             ]
         ],
