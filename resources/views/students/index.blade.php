@@ -103,13 +103,11 @@
                         <input type="hidden" id="id" name="id">
 
                         <!-- Profile Photo Upload -->
-                        <!-- Dropzone and Progress Bar HTML -->
                         <div class="mb-3">
                             <label for="profile_photo" class="form-label">Profile Photo</label>
                             <div id="my-dropzone" class="dropzone"></div>
                             <div id="preview" class="mt-2"></div>
                             <input type="hidden" id="profile_photo_url" name="profile_photo_url">
-
                             <div id="progress-container" class="progress mt-2" style="display: none;">
                                 <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;"
                                     aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
@@ -157,12 +155,9 @@
                                     <option value="">Select Class Level</option>
                                     @foreach ($kelas as $k)
                                         <option value="{{ $k->id }}">{{ $k->kelas }}</option>
-                                        <!-- Adjust to your column name -->
                                     @endforeach
                                 </select>
                             </div>
-
-
                             <div class="col-md-6 mb-3">
                                 <label for="jenis_kelamin" class="form-label">Gender</label>
                                 <select class="form-select" id="jenis_kelamin" name="jenis_kelamin" required>
@@ -220,6 +215,17 @@
                                 <input type="text" class="form-control" id="nama_wali" name="nama_wali">
                             </div>
                         </div>
+                        <!-- Add the new fields here -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="wali_id" class="form-label">Guardian ID</label>
+                                <input type="number" class="form-control" id="wali_id" name="wali_id">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="wali_status" class="form-label">Guardian Status</label>
+                                <input type="text" class="form-control" id="wali_status" name="wali_status">
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -254,69 +260,120 @@
 
             // Initialize Dropzone
             Dropzone.options.myDropzone = {
-                url: "/upload", // Replace with your upload URL
-                maxFilesize: 2, // Maximum file size in MB
-                acceptedFiles: "image/*", // Accept only images
-                init: function() {
-                    // Show the progress bar container initially hidden
-                    const progressContainer = document.getElementById('progress-container');
-                    progressContainer.style.display = 'none'; // Hide initially
-                    this.on("sending", function(file, xhr, formData) {
-                        // Add CSRF token to the form data
-                        const token = $('meta[name="csrf-token"]').attr('content');
-                        formData.append('_token', token);
-                    });
-                    this.on("addedfile", function() {
-                        // Show the progress bar when a file is added
-                        progressContainer.style.display = 'block';
-                    });
+    url: "/upload", // Replace with your upload URL
+    maxFilesize: 2, // Maximum file size in MB
+    acceptedFiles: "image/*", // Accept only images
+    maxFiles: 1, // Limit to one file
+    init: function() {
+        const progressContainer = document.getElementById('progress-container');
+        progressContainer.style.display = 'none'; // Hide initially
 
-                    this.on("uploadprogress", function(file, progress) {
-                        // Update the progress bar
-                        const progressBar = document.getElementById('progress-bar');
-                        progressBar.style.width = progress + '%';
-                        progressBar.setAttribute('aria-valuenow', progress);
-                    });
+        this.on("sending", function(file, xhr, formData) {
+            // Add CSRF token to the form data
+            const token = $('meta[name="csrf-token"]').attr('content');
+            formData.append('_token', token);
+        });
 
-                    this.on("success", function(file, response) {
-                        console.log("File uploaded successfully:", response);
-                        $('#profile_photo_url').val(response.filePath);
-                        // Display uploaded image in the preview area
-                        const preview = document.getElementById('preview');
-                        const img = document.createElement('img');
-                        img.src = response.filePath; // Adjust according to your response
-                        img.classList.add('img-thumbnail', 'mt-2');
-                        img.style.maxWidth = '200px';
-                        preview.innerHTML = ''; // Clear previous previews
-                        preview.appendChild(img);
+        this.on("addedfile", function(file) {
+            // Show the progress bar when a file is added
+            progressContainer.style.display = 'block';
+            // Remove any previously uploaded files
+            if (this.files[1] != null) {
+                this.removeFile(this.files[0]); // Remove the first file if a second is added
+            }
+            // Resize the image before upload
+            resizeImage(file);
+        });
 
-                        // Hide the progress bar and reset it
-                        progressContainer.style.display = 'none';
-                        const progressBar = document.getElementById('progress-bar');
-                        progressBar.style.width = '0%';
-                        progressBar.setAttribute('aria-valuenow', '0'); // Reset value
-                    });
+        this.on("uploadprogress", function(file, progress) {
+            // Update the progress bar
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = progress + '%';
+            progressBar.setAttribute('aria-valuenow', progress);
+        });
 
-                    this.on("error", function(file, errorMessage) {
-                        console.error("Error uploading file:", errorMessage);
+        this.on("success", function(file, response) {
+            console.log("File uploaded successfully:", response);
+            $('#profile_photo_url').val(response.filePath);
+            // Display uploaded image in the preview area
+            const preview = document.getElementById('preview');
+            const img = document.createElement('img');
+            img.src = response.filePath; // Adjust according to your response
+            img.classList.add('img-thumbnail', 'mt-2');
+            img.style.maxWidth = '200px';
+            preview.innerHTML = ''; // Clear previous previews
+            preview.appendChild(img);
 
-                        // Show error toast notification
-                        Toastify({
-                            text: "Error uploading file: " + errorMessage,
-                            duration: 3000,
-                            gravity: "top",
-                            position: 'right',
-                            backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
-                        }).showToast();
+            // Hide the progress bar and reset it
+            progressContainer.style.display = 'none';
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = '0%';
+            progressBar.setAttribute('aria-valuenow', '0'); // Reset value
+        });
 
-                        // Hide the progress bar
-                        progressContainer.style.display = 'none';
-                        const progressBar = document.getElementById('progress-bar');
-                        progressBar.style.width = '0%'; // Reset progress bar
-                        progressBar.setAttribute('aria-valuenow', '0'); // Reset value
-                    });
+        this.on("error", function(file, errorMessage) {
+            console.error("Error uploading file:", errorMessage);
+
+            // Show error toast notification
+            Toastify({
+                text: "Error uploading file: " + errorMessage,
+                duration: 3000,
+                gravity: "top",
+                position: 'right',
+                backgroundColor: "linear-gradient(to right, #FF5F6D, #FFC371)",
+            }).showToast();
+
+            // Hide the progress bar
+            progressContainer.style.display = 'none';
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = '0%'; // Reset progress bar
+            progressBar.setAttribute('aria-valuenow', '0'); // Reset value
+        });
+    }
+};
+
+// Function to resize the image
+function resizeImage(file) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const MAX_WIDTH = 800; // Set max width
+            const MAX_HEIGHT = 800; // Set max height
+            let width = img.width;
+            let height = img.height;
+
+            // Calculate the new dimensions
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
                 }
-            };
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                }
+            }
+
+            // Resize the canvas
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Convert the canvas to a blob and upload it
+            canvas.toBlob(function(blob) {
+                const resizedFile = new File([blob], file.name, { type: file.type });
+                Dropzone.forElement("#myDropzone").removeFile(file); // Remove original file
+                Dropzone.forElement("#myDrop zone").addFile(resizedFile); // Add resized file
+            }, file.type);
+        };
+    };
+    reader.readAsDataURL(file);
+}
 
             $(document).ready(function() {
                 $('#tingkat_rombel').select2({
@@ -634,7 +691,7 @@
                     // Fetch the student data using AJAX
                     $.ajax({
                         url: '/students/' + studentId +
-                            '/edit', // Your API route to fetch the student data
+                        '/edit', // Your API route to fetch the student data
                         type: 'GET',
                         success: function(response) {
                             // Check if response contains the data object and expected fields
@@ -647,7 +704,7 @@
                                 $('#tempat_lahir').val(response.data.tempat_lahir);
                                 $('#tanggal_lahir').val(response.data.tanggal_lahir);
                                 $('#umur').val(response.data.umur);
-                                $('#tingkat_rombel').val(response.data.tingkat_rombel);
+                                $('#tingkat_rombel').val(response.data.tingkat_rombel).change();
                                 $('#jenis_kelamin').val(response.data.jenis_kelamin);
                                 $('#status').val(response.data.status);
                                 $('#alamat').val(response.data.alamat);
@@ -658,7 +715,12 @@
                                 $('#nama_ayah').val(response.data.nama_ayah);
                                 $('#nama_ibu').val(response.data.nama_ibu);
                                 $('#nama_wali').val(response.data.nama_wali);
-                                // Add other form fields as needed...
+
+                                // Populate the new fields for guardian information
+                                $('#wali_id').val(response.data
+                                .wali_id); // Add this line for wali_id
+                                $('#wali_status').val(response.data
+                                .wali_status); // Add this line for wali_status
 
                                 // Show the modal with animation
                                 $('#studentModal').modal('show');

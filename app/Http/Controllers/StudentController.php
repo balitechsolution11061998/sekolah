@@ -101,6 +101,8 @@ class StudentController extends Controller
             'nama_ayah' => $request->input('nama_ayah'),
             'nama_ibu' => $request->input('nama_ibu'),
             'nama_wali' => $request->input('nama_wali'),
+            'wali_id' => $request->input('wali_id'),
+            'wali_status' => $request->input('wali_status'),
         ];
         if ($request->has('profile_photo_url') && $request->input('profile_photo_url') != '') {
             $data['foto_profile'] = $request->input('profile_photo_url');
